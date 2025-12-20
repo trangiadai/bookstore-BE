@@ -1,6 +1,5 @@
 package com.ctu.bookstore.controller.conversation;
 
-
 import com.ctu.bookstore.dto.request.chat.ChatMessageRequest;
 import com.ctu.bookstore.dto.respone.ApiRespone;
 import com.ctu.bookstore.dto.respone.chat.ChatMessageRespone;
@@ -15,21 +14,19 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("messages")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequestMapping("/messages")
 public class ChatMessageController {
     ChatMessageService chatMessageService;
     @PostMapping("/create")
-    ApiRespone<ChatMessageRespone> create(
-            @RequestBody @Valid ChatMessageRequest request) {
+    ApiRespone<ChatMessageRespone> create(@RequestBody @Valid ChatMessageRequest request) {
         return ApiRespone.<ChatMessageRespone>builder()
                 .result(chatMessageService.create(request))
                 .build();
     }
 
     @GetMapping
-    ApiRespone<List<ChatMessageRespone>> getMessages(
-            @RequestParam("conversationId") String conversationId) {
+    ApiRespone<List<ChatMessageRespone>> getMessages(@RequestParam("conversationId") String conversationId) {
         return ApiRespone.<List<ChatMessageRespone>>builder()
                 .result(chatMessageService.getMessages(conversationId))
                 .build();

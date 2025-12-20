@@ -13,11 +13,9 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CommentRequest {
-
     Long orderId;    // Đơn hàng dùng để verify đã mua sản phẩm
-
+    String productId;
     String comment;
-
     @NotNull
     @Min(1)
     @Max(5)

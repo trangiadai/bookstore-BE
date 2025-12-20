@@ -6,7 +6,9 @@ import com.ctu.bookstore.dto.respone.ApiRespone;
 import com.ctu.bookstore.dto.respone.chat.ConversationResponse;
 import com.ctu.bookstore.service.chat.ConversationService;
 import jakarta.validation.Valid;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +17,11 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@RequestMapping("/conversations")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequestMapping("/conversations")
 public class ConversationController {
-    @Autowired
+//    @Autowired refactor version 1
     ConversationService conversationService;
 
     @PostMapping("/create")
@@ -29,7 +32,6 @@ public class ConversationController {
     }
     @PostMapping("/create-default")
     ApiRespone<ConversationResponse> createConversation() {
-//        System.out.println("-----------------");
         log.info("-------------------");
         return ApiRespone.<ConversationResponse>builder()
                 .result(conversationService.createDefault())

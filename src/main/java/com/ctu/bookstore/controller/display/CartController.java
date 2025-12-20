@@ -9,25 +9,23 @@ import com.ctu.bookstore.mapper.display.CartMapper;
 import com.ctu.bookstore.repository.identity.UserRepository;
 import com.ctu.bookstore.repository.display.CartRepository;
 import com.ctu.bookstore.service.display.CartService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/carts")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequestMapping("/carts")
 public class CartController {
-    @Autowired
-    private CartService cartService;
-    @Autowired
+    CartService cartService;
     UserRepository userRepository;
-    @Autowired
     CartRepository cartRepository;
-    @Autowired
-    private CartMapper cartMapper;
-//    private final String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-    @PostMapping("/item")
+    CartMapper cartMapper;
+
+    @PostMapping("/add")
     public ApiRespone<CartResponse> addOrUpdateItem(@RequestBody CartItemRequest request){
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(userName).orElseThrow();
@@ -38,12 +36,15 @@ public class CartController {
                 .result(cartMapper.toCartResponse(cart))
                 .build();
     }
+
     @GetMapping("/my-cart")
     public ApiRespone<CartResponse> getMyCart(){
         return ApiRespone.<CartResponse>builder()
                 .result(cartMapper.toCartResponse(cartService.getMyCart()))
                 .build();
     }
+
+    // This is delete CART not delete the item in the cart
     @DeleteMapping("/delete")
     public void deleteCart(){
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -51,16 +52,19 @@ public class CartController {
         Cart cart = cartRepository.findByUserId(user.getId()).orElseThrow(()->new RuntimeException("khong có user trong cart controller"));
         cartService.delete(cart.getId());
     }
+
     @DeleteMapping("/delete-item/{id}")
     public void deleteCartItem(@PathVariable("id") String cartItemId){
        cartService.deleteCartItem(cartItemId);
     }
+
     @GetMapping("/size")
     public ApiRespone<Integer> sizeOfCart(){
         return ApiRespone.<Integer>builder()
                 .result(cartService.getSumMyCart())
                 .build();
     }
+
     @PutMapping("/increase-item/{id}")
     public ApiRespone<CartResponse> increase(@PathVariable("id") String productId){
 
@@ -68,6 +72,7 @@ public class CartController {
                 .result(cartMapper.toCartResponse(cartService.incrementItem(productId)))
                 .build();
     }
+
     @PutMapping("/decrease-item/{id}")
     public ApiRespone<CartResponse> decrease(@PathVariable("id") String productId ){
 

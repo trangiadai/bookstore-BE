@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/test-gemini")
+@RequestMapping("/test-gemini")
 public class TestGeminiController {
 
     @Value("${gemini.api.key}")

@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
-public class ChatService {
+public class ChatBotService {
 
     @Value("${gemini.api.key}")
     private String apiKey;

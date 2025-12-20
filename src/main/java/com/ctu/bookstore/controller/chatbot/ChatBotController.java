@@ -1,7 +1,6 @@
 package com.ctu.bookstore.controller.chatbot;
 
-import com.ctu.bookstore.dto.request.chatbot.ChatRequest;
-import com.ctu.bookstore.service.chatbot.ChatService;
+import com.ctu.bookstore.service.chatbot.ChatBotService;
 //import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,13 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-public class ChatController {
+public class ChatBotController {
     @Autowired
-    private ChatService chatService;
+    private ChatBotService chatBotService;
 
     @PostMapping("/chat")
     public Map<String, String> chat(@RequestBody Map<String, String> req) {
-        String answer = chatService.ask(req.get("message"));
+        String answer = chatBotService.ask(req.get("message"));
         return Map.of("answer", answer);
     }
 }

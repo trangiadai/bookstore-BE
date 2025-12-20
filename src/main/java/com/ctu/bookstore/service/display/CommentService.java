@@ -35,17 +35,17 @@ public class CommentService {
     CommentMapper commentMapper;
     UserService userService;
     @Transactional
-    public CommentResponse createComment(String productId, CommentRequest request) {
+    public CommentResponse createComment(CommentRequest request) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         var user = userRepository.findByUsername(name)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        var product = productRepository.findById(productId)
+        var product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
         // Tạo comment
         Comment comment = Comment.builder()
-                .productId(productId)
+                .productId(request.getProductId())
                 .comment(request.getComment())
                 .rating(request.getRating())
                 .createdAt(Instant.now())
