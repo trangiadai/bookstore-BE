@@ -15,26 +15,25 @@ import com.ctu.bookstore.repository.identity.UserRepository;
 import com.ctu.bookstore.service.identity.UserService;
 import com.ctu.bookstore.service.display.CommentService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
-@RequestMapping("/user")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequestMapping("/users")
 public class UserController {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private UserMapper userMapper;
-    @Autowired
+    UserService userService;
+    UserMapper userMapper;
     UserRepository userRepository;
-    @Autowired
     UserOrderMapper userOrderMapper;
-    @Autowired
     CommentService commentService;
-    @Autowired
     ProductMapper productMapper;
 //    @PostMapping
 //    public ApiRespone<UserRespone> createUser(@RequestBody @Valid UserRequest userRequest){
@@ -46,36 +45,39 @@ public class UserController {
     @PostMapping
     public ApiRespone<UserRespone> createUser(@RequestBody @Valid UserRequest userRequest){
         ApiRespone<User> apiRespone = new ApiRespone<>();
-
-
         return ApiRespone.<UserRespone>builder()
                 .result(userService.createUser(userRequest))
                 .build();
     }
+
     @GetMapping
     ApiRespone<List<UserRespone>> getUsers(){
         return ApiRespone.<List<UserRespone>>builder()
                 .result(userService.getUsers())
                 .build();
     }
+
     @GetMapping("/{userId}")
     ApiRespone<UserRespone> getUser(@PathVariable("userId") String userId){
         return ApiRespone.<UserRespone>builder()
                 .result(userService.getUser(userId))
                 .build();
     }
+
     @GetMapping("/info")
     ApiRespone<UserRespone> getInfor(){
         return ApiRespone.<UserRespone>builder()
                 .result(userService.getMyInfor())
                 .build();
     }
+
     @GetMapping("/info-checkout")
     ApiRespone<InforCheckout> getInforCheckout(){
         return ApiRespone.<InforCheckout>builder()
                 .result(userService.getInforCheckout())
                 .build();
     }
+
     @PutMapping("/{userId}")
     public ApiRespone<UserRespone> updateUser(@RequestBody UserUpdateRequest userRequestBody ){
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -84,6 +86,7 @@ public class UserController {
                 .result(userService.updateUser(user.getId(),userRequestBody))
                 .build();
     }
+
     @GetMapping("/orders")
     public ApiRespone<List<UserOrderResponse>> getAllUserOrder(){
         return ApiRespone.<List<UserOrderResponse>>builder()
@@ -91,6 +94,7 @@ public class UserController {
                         .map(order -> userOrderMapper.toUserOrderResponse(order)).toList())
                 .build();
     }
+
     @GetMapping("/productAllowComment")
     public ApiRespone<List<ProductResponse>> getProductAllowComment(){
         return  ApiRespone.<List<ProductResponse>>builder()

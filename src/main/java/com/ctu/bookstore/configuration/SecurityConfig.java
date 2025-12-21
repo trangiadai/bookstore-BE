@@ -30,7 +30,7 @@ import java.util.List;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    private final String[] PUBLIC_ENDPOINTS = {"/users","/user",
+    private final String[] PUBLIC_ENDPOINTS = {"/users",
             "/auth/token", "/auth/introspect" ,"/auth/logout", "/images/upload",
             "/products","/products/*","checkout/create-session","/carts/my-cart",
             "/carts/size","user/infor","/intentChat","/category","/products/filter-by-category","/search/*", "/search", "/api/test-gemini"
@@ -78,7 +78,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/images/upload", "/products",
                                 "checkout/create-session","carts/item","/conversations/create",
                                 "/conversation/my-conversations","/messages/create","/messages/*",
-                                "/conversations/create-default","/chat","/intentChat","/user/*").permitAll()
+                                "/conversations/create-default","/chat","/intentChat","/users/*").permitAll()
                         .anyRequest().authenticated());
 
         httpSecurity.csrf(csrf -> csrf.disable());

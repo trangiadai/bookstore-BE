@@ -8,17 +8,21 @@ import com.ctu.bookstore.dto.respone.identity.AuthenticationRespone;
 import com.ctu.bookstore.dto.respone.IntrospectRespone;
 import com.ctu.bookstore.service.identity.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 
 @RestController
-@RequestMapping("/auth")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/auth")
 public class AuthenticationController {
-    @Autowired
-    private AuthenticationService authenticationService;
+    AuthenticationService authenticationService;
+
     @PostMapping("/token")
     public ApiRespone<AuthenticationRespone>authenticate(@RequestBody AuthenticationRequest authenticationRequest){
         AuthenticationRespone result = authenticationService.authenticate(authenticationRequest);

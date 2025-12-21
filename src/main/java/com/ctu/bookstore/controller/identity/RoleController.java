@@ -14,10 +14,10 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/roles")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
+@RequestMapping("/roles")
 public class RoleController {
     RoleService roleService;
 
