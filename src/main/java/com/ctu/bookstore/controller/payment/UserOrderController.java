@@ -6,20 +6,21 @@ import com.ctu.bookstore.dto.respone.payment.UserOrderResponse;
 import com.ctu.bookstore.enums.OrderStatus;
 import com.ctu.bookstore.repository.identity.UserRepository;
 import com.ctu.bookstore.service.payment.UserOrderService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/orders")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequestMapping("/orders")
 public class UserOrderController {
-    private final UserOrderService userOrderService;
-    @Autowired
-    private UserRepository userRepository;
+    UserOrderService userOrderService;
+    UserRepository userRepository;
 
     @GetMapping
     public ApiRespone<List<UserOrderResponse>> getAllOrders(){
@@ -36,6 +37,7 @@ public class UserOrderController {
                 .result(userOrderService.getOrdersByUserId(user.get().getId()))
                 .build();
     }
+
     @PutMapping("/{orderId}/status")
     public ApiRespone<UserOrderResponse> updateStatus(
             @PathVariable Long orderId,
@@ -46,6 +48,7 @@ public class UserOrderController {
                 .result(response)
                 .build();
     }
+
     @GetMapping("/best-selling-products")
     public ApiRespone<List<BestSellingProductResponse>> getBestSellingProducts(
             @RequestParam(defaultValue = "10") int limit  // top 10 mặc định

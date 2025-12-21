@@ -7,20 +7,19 @@ import com.ctu.bookstore.entity.payment.CheckoutRespone;
 import com.ctu.bookstore.repository.identity.UserRepository;
 import com.ctu.bookstore.service.payment.PaymentService;
 import com.stripe.exception.StripeException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*; // 👈 Thêm annotation cần thiết
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping("/checkout")
 public class PaymentController {
-
-    // Sử dụng @RequiredArgsConstructor thay vì @Autowired cho constructor injection là cách tốt hơn
-    @Autowired
     PaymentService paymentService;
-    @Autowired
     UserRepository userRepository;
-
 
     @PostMapping("/create-session")
     public ApiRespone<CheckoutRespone> createCheckoutSession() {
@@ -37,6 +36,7 @@ public class PaymentController {
             throw new RuntimeException("Lỗi Stripe: " + e.getMessage());
         }
     }
+
     @PostMapping("/create-shipCOD")
     public ApiRespone<UserOrderResponse> createShipCOD() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

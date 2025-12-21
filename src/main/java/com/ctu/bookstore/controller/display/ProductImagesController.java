@@ -1,9 +1,8 @@
 package com.ctu.bookstore.controller.display;
 
 import com.ctu.bookstore.service.display.ProductImagesService;
-import org.springframework.stereotype.Controller;
-import com.ctu.bookstore.entity.display.ProductImages;
-
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/images")
 @RequiredArgsConstructor
-@Controller
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequestMapping("/images")
 public class ProductImagesController {
-    private final ProductImagesService cloudinaryService;
+    ProductImagesService cloudinaryService;
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file) {
