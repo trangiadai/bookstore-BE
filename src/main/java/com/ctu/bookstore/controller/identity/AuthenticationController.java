@@ -34,12 +34,13 @@ public class AuthenticationController {
 
     @PostMapping("/introspect")
     public ApiRespone<IntrospectRespone>introspect(@RequestBody IntrospectRequest introspectRequest) throws ParseException, JOSEException {
-        IntrospectRespone result = authenticationService.instrospect(introspectRequest);
+        IntrospectRespone result = authenticationService.introspect(introspectRequest);
 
         return ApiRespone.<IntrospectRespone>builder()
                 .result(result)
                 .build();
     }
+
     @PostMapping("/logout")
     public ApiRespone<Void>logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
         authenticationService.logout(request);

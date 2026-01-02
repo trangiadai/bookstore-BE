@@ -28,7 +28,7 @@ public class CustomJwtDecoder implements JwtDecoder {
     @Override
     public Jwt decode(String token) throws JwtException {
         try {
-            IntrospectRespone response = authenticationService.instrospect(IntrospectRequest.builder()
+            IntrospectRespone response = authenticationService.introspect(IntrospectRequest.builder()
                             .token(token)
                     .build());
             if (!response.isValid())

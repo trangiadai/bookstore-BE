@@ -38,7 +38,7 @@ public class SocketHandler {
         //get token from request param
         String token = client.getHandshakeData().getSingleUrlParam("token");
         //verify
-        var introspectResponse = authenticationService.instrospect(new IntrospectRequest(token));
+        var introspectResponse = authenticationService.introspect(new IntrospectRequest(token));
         if(introspectResponse.isValid()){
             log.info("client connected: {}", client.getSessionId());
             var user = userRepository.findByUsername(introspectResponse.getUserName());

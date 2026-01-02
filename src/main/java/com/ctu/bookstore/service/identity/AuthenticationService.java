@@ -16,7 +16,11 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,54 +35,71 @@ import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.UUID;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService {
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private InvalidatedTokenRepository invalidatedTokenRepository;
-
-
+    UserRepository userRepository;
+    InvalidatedTokenRepository invalidatedTokenRepository;
+    @NonFinal // để không bị đưa vào constructor (vì đã dùng @RequiredArg phía trên)
     @Value("${jwt.signerKey}")
-    private String SIGNER_KEY;
+    String SIGNER_KEY;
 
-    public IntrospectRespone instrospect(IntrospectRequest request)
-            throws JOSEException, ParseException {
-       var token = request.getToken();
-        SignedJWT jwt = null; //để lưu sessionId trong socketHandler
-
-       boolean isValid = true;
-       try {
-           jwt = verifyToken(token);
-       }catch (Exception e){
-           isValid = false;
-       }
-
-
-       return IntrospectRespone.builder()
-               .userName(
-                       Objects.nonNull(jwt)
-                               ? jwt.getJWTClaimsSet().getSubject()
-                                : null
-                       )
-               .valid(isValid)
-               .build();
-    }
     public AuthenticationRespone authenticate(AuthenticationRequest authenticationRequest){
-        var user = userRepository.findByUsername(authenticationRequest.getUsername())
+        User user = userRepository.findByUsername(authenticationRequest.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-
-
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        boolean result = passwordEncoder.matches(authenticationRequest.getPassword(), user.getPassword());
+        boolean authenticated = passwordEncoder.matches(authenticationRequest.getPassword(), user.getPassword());
+        if(!authenticated){
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
 
         String token = generateToken(user);
 
         return AuthenticationRespone.builder()
                 .token(token)
-                .authenticated(result)
+                .authenticated(authenticated)
                 .build();
+    }
+
+    private String generateToken(User user){
+        // Using nimbus library to generate Token
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
+        JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
+                .issuer("BookStore_BE")
+                .subject(user.getUsername())
+                .issueTime(new Date())
+                .expirationTime(new Date(
+                        Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()))
+                .jwtID(UUID.randomUUID().toString())
+                .claim("scope",buildScope(user))
+                .build();
+        //khi nào hiểu được buildScope ròi thi quay lại đây tự hoi xem có cần truyền toàn bộ user vào hàm này để tạo token hay khong
+        // hay chỉ cần mỗi username và role
+        Payload payload = new Payload(jwtClaimsSet.toJSONObject());
+        JWSObject jwsObject = new JWSObject(header,payload);
+        try {
+            jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
+            return jwsObject.serialize();
+        } catch (JOSEException e) {
+            log.error("Cannot create token", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String buildScope(User user){
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        System.out.println("role của user trong buildScope " + user.getRoles());
+        if (!CollectionUtils.isEmpty(user.getRoles()))
+            user.getRoles().forEach(role -> {
+                stringJoiner.add("ROLE_" + role.getName());
+                if (!CollectionUtils.isEmpty(role.getPermissions()))
+                    role.getPermissions()
+                            .forEach(permission -> stringJoiner.add(permission.getName()));
+            });
+        System.out.println("stringJoiner của buildScope trong AuthenticationService "+stringJoiner);
+        return stringJoiner.toString();
     }
 
     public void logout(LogoutRequest request) throws ParseException, JOSEException {
@@ -94,59 +115,36 @@ public class AuthenticationService {
 
         invalidatedTokenRepository.save(invalidatedToken);
     }
-    private String generateToken(User user){
-        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
-        JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .issuer("BookStore_BE")
-                .subject(user.getUsername())
-                .issueTime(new Date())
-                .expirationTime(new Date(
-                        Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()))
-                .jwtID(UUID.randomUUID().toString())
-                .claim("scope",buildScope(user))
-                .build();
 
-        Payload payload = new Payload(jwtClaimsSet.toJSONObject());
-        JWSObject jwsObject = new JWSObject(header,payload);
+    public IntrospectRespone introspect(IntrospectRequest request)
+            throws JOSEException, ParseException {
 
+        var token = request.getToken();
+        SignedJWT jwt = null; //để lưu sessionId trong socketHandler
+
+        boolean isValid = true;
         try {
-            jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
-        } catch (JOSEException e) {
-            throw new RuntimeException(e);
+            jwt = verifyToken(token);
+        }catch (Exception e){
+            isValid = false;
         }
-        return jwsObject.serialize();
 
+        return IntrospectRespone.builder()
+                .userName(
+                        Objects.nonNull(jwt)
+                                ? jwt.getJWTClaimsSet().getSubject()
+                                : null
+                )
+                .valid(isValid)
+                .build();
     }
-    private String buildScope(User user){
-        StringJoiner stringJoiner = new StringJoiner(" ");
-        System.out.println("role của user trong buildScope "+user.getRoles());
-        if (!CollectionUtils.isEmpty(user.getRoles()))
-            user.getRoles().forEach(role -> {
-                stringJoiner.add("ROLE_" + role.getName());
-                if (!CollectionUtils.isEmpty(role.getPermissions()))
-                    role.getPermissions()
-                            .forEach(permission -> stringJoiner.add(permission.getName()));
-            });
-        System.out.println("stringJoiner của buildScope trong AuthenticationService "+stringJoiner);
-        return stringJoiner.toString();
-    }
-//private String buildScope(User user){
-//    StringJoiner stringJoiner = new StringJoiner(" ");
-//    if (!CollectionUtils.isEmpty(user.getRoles()))
-//        user.getRoles().forEach(stringJoiner::add);
-//
-//    return stringJoiner.toString();
-//}
 
     private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
-
         SignedJWT signedJWT = SignedJWT.parse(token);
-
         Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
 
         var verified = signedJWT.verify(verifier);
-
         if (!(verified && expiryTime.after(new Date())))
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
