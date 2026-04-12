@@ -21,7 +21,7 @@ import java.io.IOException;
 public class ProductImagesController {
     ProductImagesService cloudinaryService;
 
-    @PostMapping("/upload")
+    @PostMapping
     public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return new ResponseEntity<>("File không được rỗng!", HttpStatus.BAD_REQUEST);

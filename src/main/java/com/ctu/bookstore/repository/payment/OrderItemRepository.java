@@ -1,6 +1,6 @@
 package com.ctu.bookstore.repository.payment;
 
-import com.ctu.bookstore.dto.respone.display.BestSellingProductResponse;
+import com.ctu.bookstore.dto.respone.display.BestSellingProductResponseDTO;
 import com.ctu.bookstore.entity.payment.OrderItem;
 import com.ctu.bookstore.enums.OrderStatus;
 import org.springframework.data.domain.Page;
@@ -26,7 +26,7 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
         GROUP BY oi.product.id, oi.product.nameProduct
         ORDER BY SUM(oi.quantity) DESC
         """)
-    List<BestSellingProductResponse> findBestSellingProducts(@Param("statuses") List<OrderStatus> statuses);
+    List<BestSellingProductResponseDTO> findBestSellingProducts(@Param("statuses") List<OrderStatus> statuses);
 
     // Nếu muốn giới hạn số lượng kết quả (top N) thì dùng Pageable:
     @Query("""
@@ -41,7 +41,7 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
         GROUP BY oi.product.id, oi.product.nameProduct
         ORDER BY SUM(oi.quantity) DESC
         """)
-    Page<BestSellingProductResponse> findBestSellingProducts(
+    Page<BestSellingProductResponseDTO> findBestSellingProducts(
             @Param("statuses") List<OrderStatus> statuses,
             Pageable pageable
     );

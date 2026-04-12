@@ -1,7 +1,7 @@
 package com.ctu.bookstore.service.chat;
 
-import com.ctu.bookstore.dto.request.chat.ConversationRequest;
-import com.ctu.bookstore.dto.respone.chat.ConversationResponse;
+import com.ctu.bookstore.dto.request.chat.ConversationRequestDTO;
+import com.ctu.bookstore.dto.respone.chat.ConversationResponseDTO;
 import com.ctu.bookstore.entity.chat.Conversation;
 import com.ctu.bookstore.entity.chat.ParticipantInfo;
 import com.ctu.bookstore.mapper.chat.ConversationMapper;
@@ -28,7 +28,7 @@ public class ConversationService {
     @Autowired
     ConversationMapper conversationMapper;
 
-    public List<ConversationResponse> myConversations() {
+    public List<ConversationResponseDTO> myConversations() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         var user = userRepository.findByUsername(username)
@@ -42,7 +42,7 @@ public class ConversationService {
                 .toList();
     }
 
-    public ConversationResponse create(ConversationRequest request) {
+    public ConversationResponseDTO create(ConversationRequestDTO request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         var user = userRepository.findByUsername(username)
@@ -93,26 +93,26 @@ public class ConversationService {
         return stringJoiner.toString();
     }
 
-    private ConversationResponse toConversationResponse(Conversation conversation) {
+    private ConversationResponseDTO toConversationResponse(Conversation conversation) {
         String currentUserName = SecurityContextHolder.getContext().getAuthentication().getName();
 
         var userCurrent = userRepository.findByUsername(currentUserName)
                 .orElseThrow(() -> new RuntimeException("User not found with username: " + currentUserName));
 
         String currentUserId = userCurrent.getId();
-        ConversationResponse conversationResponse = conversationMapper.toConversationResponse(conversation);
+        ConversationResponseDTO conversationResponseDTO = conversationMapper.toConversationResponse(conversation);
 
         conversation.getParticipants().stream()
                 .filter(participantInfo -> !participantInfo.getUserId().equals(currentUserId))
                 .findFirst()
                 .ifPresent(participantInfo -> {
-                    conversationResponse.setConversationName(participantInfo.getUsername());
-                    conversationResponse.setConversationAvatar(participantInfo.getAvata());
+                    conversationResponseDTO.setConversationName(participantInfo.getUsername());
+                    conversationResponseDTO.setConversationAvatar(participantInfo.getAvata());
                 });
 
-        return conversationResponse;
+        return conversationResponseDTO;
     }
-    public ConversationResponse createDefault() {
+    public ConversationResponseDTO createDefault() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         var user = userRepository.findByUsername(username)

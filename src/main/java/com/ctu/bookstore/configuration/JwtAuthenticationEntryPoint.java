@@ -1,6 +1,6 @@
 package com.ctu.bookstore.configuration;
 
-import com.ctu.bookstore.dto.respone.ApiRespone;
+import com.ctu.bookstore.dto.respone.ApiResponeDTO;
 import com.ctu.bookstore.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -21,11 +21,11 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setStatus(errorCode.getHttpStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        ApiRespone<?> apiRespone = ApiRespone.builder()
+        ApiResponeDTO<?> apiResponeDTO = ApiResponeDTO.builder()
                 .message(errorCode.getMessage())
                 .code(errorCode.getCode())
                 .build();
         ObjectMapper objectMapper = new ObjectMapper();
-        response.getWriter().write(objectMapper.writeValueAsString(apiRespone));
+        response.getWriter().write(objectMapper.writeValueAsString(apiResponeDTO));
     }
 }

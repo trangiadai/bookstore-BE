@@ -1,8 +1,8 @@
 package com.ctu.bookstore.controller.payment;
 
-import com.ctu.bookstore.dto.respone.ApiRespone;
-import com.ctu.bookstore.dto.respone.display.BestSellingProductResponse;
-import com.ctu.bookstore.dto.respone.payment.UserOrderResponse;
+import com.ctu.bookstore.dto.respone.ApiResponeDTO;
+import com.ctu.bookstore.dto.respone.display.BestSellingProductResponseDTO;
+import com.ctu.bookstore.dto.respone.payment.UserOrderResponseDTO;
 import com.ctu.bookstore.enums.OrderStatus;
 import com.ctu.bookstore.repository.identity.UserRepository;
 import com.ctu.bookstore.service.payment.UserOrderService;
@@ -23,37 +23,37 @@ public class UserOrderController {
     UserRepository userRepository;
 
     @GetMapping
-    public ApiRespone<List<UserOrderResponse>> getAllOrders(){
-        return ApiRespone.<List<UserOrderResponse>>builder()
+    public ApiResponeDTO<List<UserOrderResponseDTO>> getAllOrders(){
+        return ApiResponeDTO.<List<UserOrderResponseDTO>>builder()
                 .result(userOrderService.getAllOrders())
                 .build();
     }
 
-    @GetMapping("/user")
-    public ApiRespone<List<UserOrderResponse>> getOrders() {
+    @GetMapping
+    public ApiResponeDTO<List<UserOrderResponseDTO>> getOrders() {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         var user = userRepository.findByUsername(name);
-        return ApiRespone.<List<UserOrderResponse>>builder()
+        return ApiResponeDTO.<List<UserOrderResponseDTO>>builder()
                 .result(userOrderService.getOrdersByUserId(user.get().getId()))
                 .build();
     }
 
-    @PutMapping("/{orderId}/status")
-    public ApiRespone<UserOrderResponse> updateStatus(
+    @PutMapping("/{orderId}")
+    public ApiResponeDTO<UserOrderResponseDTO> updateStatus(
             @PathVariable Long orderId,
             @RequestParam OrderStatus status
     ) {
-        UserOrderResponse response = userOrderService.updateOrderStatus(orderId, status);
-        return ApiRespone.<UserOrderResponse>builder()
+        UserOrderResponseDTO response = userOrderService.updateOrderStatus(orderId, status);
+        return ApiResponeDTO.<UserOrderResponseDTO>builder()
                 .result(response)
                 .build();
     }
 
     @GetMapping("/best-selling-products")
-    public ApiRespone<List<BestSellingProductResponse>> getBestSellingProducts(
+    public ApiResponeDTO<List<BestSellingProductResponseDTO>> getBestSellingProducts(
             @RequestParam(defaultValue = "10") int limit  // top 10 mặc định
     ) {
-        return ApiRespone.<List<BestSellingProductResponse>>builder()
+        return ApiResponeDTO.<List<BestSellingProductResponseDTO>>builder()
                 .result(userOrderService.getBestSellingProducts(limit))
                 .build();
     }

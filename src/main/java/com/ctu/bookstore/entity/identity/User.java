@@ -34,7 +34,7 @@ public class User {
     String avatar;
     String email;
     String phoneNumber;
-    String adress;
+    String address;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "checkout_id") // tạo cột checkout_id trong bảng user
     InforCheckout inforCheckout;
@@ -60,7 +60,7 @@ public class User {
                 ", gender=" + gender +
                 ", avatar='" + avatar + '\'' +
                 ", email='" + email + '\'' +
-                ", adress='" + adress + '\'' +
+                ", address='" + address + '\'' +
                 ", roles=" + roles +
                 '}';
     }

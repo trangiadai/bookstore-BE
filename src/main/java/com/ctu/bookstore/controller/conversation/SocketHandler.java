@@ -4,7 +4,7 @@ import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.annotation.OnConnect;
 import com.corundumstudio.socketio.annotation.OnDisconnect;
-import com.ctu.bookstore.dto.request.identity.IntrospectRequest;
+import com.ctu.bookstore.dto.request.identity.IntrospectRequestDTO;
 import com.ctu.bookstore.entity.chat.WebSocketSession;
 import com.ctu.bookstore.repository.identity.UserRepository;
 import com.ctu.bookstore.service.identity.AuthenticationService;
@@ -38,7 +38,7 @@ public class SocketHandler {
         //get token from request param
         String token = client.getHandshakeData().getSingleUrlParam("token");
         //verify
-        var introspectResponse = authenticationService.introspect(new IntrospectRequest(token));
+        var introspectResponse = authenticationService.introspect(new IntrospectRequestDTO(token));
         if(introspectResponse.isValid()){
             log.info("client connected: {}", client.getSessionId());
             var user = userRepository.findByUsername(introspectResponse.getUserName());

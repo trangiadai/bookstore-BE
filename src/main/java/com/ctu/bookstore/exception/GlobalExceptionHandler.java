@@ -1,6 +1,6 @@
 package com.ctu.bookstore.exception;
 
-import com.ctu.bookstore.dto.respone.ApiRespone;
+import com.ctu.bookstore.dto.respone.ApiResponeDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -12,21 +12,21 @@ import java.nio.file.AccessDeniedException;
 public class GlobalExceptionHandler {
     //bắt tất cả các exception còn lại
     @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ApiRespone> handlingException(Exception exception){
-        ApiRespone apiRespone = new ApiRespone();
+    ResponseEntity<ApiResponeDTO> handlingException(Exception exception){
+        ApiResponeDTO apiResponeDTO = new ApiResponeDTO();
         ErrorCode errorCode = ErrorCode.UNCATEGORIZED_EXCEPTION;
-        apiRespone.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
-        apiRespone.setMessage(exception.getMessage());
+        apiResponeDTO.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
+        apiResponeDTO.setMessage(exception.getMessage());
         return ResponseEntity
                 .status(errorCode.getHttpStatus())
-                .body(apiRespone);
+                .body(apiResponeDTO);
     }
     @ExceptionHandler(value = AccessDeniedException.class)
-    ResponseEntity<ApiRespone> handlingAccessDeniedException(AccessDeniedException exception){
+    ResponseEntity<ApiResponeDTO> handlingAccessDeniedException(AccessDeniedException exception){
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
 
         return ResponseEntity.status(errorCode.getHttpStatus()).body(
-                ApiRespone.builder()
+                ApiResponeDTO.builder()
                         .code(errorCode.getCode())
                         .message(errorCode.getMessage())
                         .build()
@@ -34,20 +34,20 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = AppException.class)
-    ResponseEntity<ApiRespone> handlingAppException(AppException exception){
-        ApiRespone apiRespone = new ApiRespone();
-        apiRespone.setCode(exception.getErrorCode().getCode());
-        apiRespone.setMessage(exception.getErrorCode().getMessage());
+    ResponseEntity<ApiResponeDTO> handlingAppException(AppException exception){
+        ApiResponeDTO apiResponeDTO = new ApiResponeDTO();
+        apiResponeDTO.setCode(exception.getErrorCode().getCode());
+        apiResponeDTO.setMessage(exception.getErrorCode().getMessage());
         ErrorCode errorCode = exception.getErrorCode();
 
         return ResponseEntity.status(errorCode.getHttpStatus())
-                .body(ApiRespone.builder()
+                .body(ApiResponeDTO.builder()
                         .code(errorCode.getCode())
                         .message(errorCode.getMessage())
                         .build());
     }
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    ResponseEntity<ApiRespone> handlingValidation(MethodArgumentNotValidException exception){
+    ResponseEntity<ApiResponeDTO> handlingValidation(MethodArgumentNotValidException exception){
         ErrorCode errorCode = ErrorCode.INVALID_KEY;
         String enumKey = exception.getFieldError().getDefaultMessage();
         try {
@@ -55,11 +55,11 @@ public class GlobalExceptionHandler {
         }catch (IllegalArgumentException e){
 
         }
-        ApiRespone apiRespone = new ApiRespone();
-        apiRespone.setCode(errorCode.getCode());
-        apiRespone.setMessage(errorCode.getMessage());
+        ApiResponeDTO apiResponeDTO = new ApiResponeDTO();
+        apiResponeDTO.setCode(errorCode.getCode());
+        apiResponeDTO.setMessage(errorCode.getMessage());
         return ResponseEntity
                 .status(errorCode.getHttpStatus())
-                .body(apiRespone);
+                .body(apiResponeDTO);
     }
 }

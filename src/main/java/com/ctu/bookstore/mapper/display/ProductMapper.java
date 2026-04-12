@@ -1,7 +1,7 @@
 package com.ctu.bookstore.mapper.display;
 
-import com.ctu.bookstore.dto.request.display.ProductRequest;
-import com.ctu.bookstore.dto.respone.display.ProductResponse;
+import com.ctu.bookstore.dto.request.display.ProductRequestDTO;
+import com.ctu.bookstore.dto.respone.display.ProductResponseDTO;
 import com.ctu.bookstore.entity.display.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -12,7 +12,7 @@ public interface ProductMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "imagesUrl", ignore = true)
     @Mapping(target = "category", ignore = true)
-    Product toProduct(ProductRequest request);
+    Product toProduct(ProductRequestDTO request);
     @Mapping(target = "categoryName", source = "category.nameCategory")
-    ProductResponse toProductResponse(Product request);
+    ProductResponseDTO toProductResponse(Product request);
 }

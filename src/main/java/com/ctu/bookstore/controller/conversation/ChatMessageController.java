@@ -1,8 +1,8 @@
 package com.ctu.bookstore.controller.conversation;
 
-import com.ctu.bookstore.dto.request.chat.ChatMessageRequest;
-import com.ctu.bookstore.dto.respone.ApiRespone;
-import com.ctu.bookstore.dto.respone.chat.ChatMessageRespone;
+import com.ctu.bookstore.dto.request.chat.ChatMessageRequestDTO;
+import com.ctu.bookstore.dto.respone.ApiResponeDTO;
+import com.ctu.bookstore.dto.respone.chat.ChatMessageResponeDTO;
 import com.ctu.bookstore.service.chat.ChatMessageService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -18,16 +18,16 @@ import java.util.List;
 @RequestMapping("/messages")
 public class ChatMessageController {
     ChatMessageService chatMessageService;
-    @PostMapping("/create")
-    ApiRespone<ChatMessageRespone> create(@RequestBody @Valid ChatMessageRequest request) {
-        return ApiRespone.<ChatMessageRespone>builder()
+    @PostMapping
+    ApiResponeDTO<ChatMessageResponeDTO> create(@RequestBody @Valid ChatMessageRequestDTO request) {
+        return ApiResponeDTO.<ChatMessageResponeDTO>builder()
                 .result(chatMessageService.create(request))
                 .build();
     }
 
     @GetMapping
-    ApiRespone<List<ChatMessageRespone>> getMessages(@RequestParam("conversationId") String conversationId) {
-        return ApiRespone.<List<ChatMessageRespone>>builder()
+    ApiResponeDTO<List<ChatMessageResponeDTO>> getMessages(@RequestParam("conversationId") String conversationId) {
+        return ApiResponeDTO.<List<ChatMessageResponeDTO>>builder()
                 .result(chatMessageService.getMessages(conversationId))
                 .build();
     }

@@ -1,7 +1,7 @@
 package com.ctu.bookstore.service.payment;
 
-import com.ctu.bookstore.dto.request.payment.CheckoutItemRequest;
-import com.ctu.bookstore.dto.respone.payment.UserOrderResponse;
+import com.ctu.bookstore.dto.request.payment.CheckoutItemRequestDTO;
+import com.ctu.bookstore.dto.respone.payment.UserOrderResponseDTO;
 import com.ctu.bookstore.entity.identity.User;
 import com.ctu.bookstore.entity.display.Cart;
 import com.ctu.bookstore.entity.display.CartItem;
@@ -105,7 +105,7 @@ public class PaymentService {
                 .user(user)
                 .totalAmount(totalAmount)
                 .status(OrderStatus.PENDING)
-                .shippingAddress(user.getInforCheckout().getAdress())// Cần thêm logic lấy địa chỉ
+                .shippingAddress(user.getInforCheckout().getAddress())// Cần thêm logic lấy địa chỉ
                 .orderDate(LocalDateTime.now())
                 .paymentMethod("Credit Card")
                 .phoneNumber(inforCheckout.getPhoneNumber())
@@ -150,7 +150,7 @@ public class PaymentService {
                 .stripeCheckoutUrl(session.getUrl())
                 .build();
     }
-    public UserOrderResponse BuyByShipCOD(String userId){
+    public UserOrderResponseDTO BuyByShipCOD(String userId){
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Giỏ hàng không tồn tại."));
 
@@ -192,7 +192,7 @@ public class PaymentService {
                 .user(user)
                 .totalAmount(totalAmount)
                 .status(OrderStatus.PENDING)
-                .shippingAddress(user.getInforCheckout().getAdress())// Cần thêm logic lấy địa chỉ
+                .shippingAddress(user.getInforCheckout().getAddress())// Cần thêm logic lấy địa chỉ
                 .orderDate(LocalDateTime.now())
                 .paymentMethod("Ship COD")
                 .build();
@@ -212,7 +212,7 @@ public class PaymentService {
         return userOrderMapper.toUserOrderResponse(newOrder);
     }
     @Transactional
-    public UserOrderResponse createCheckoutBySelectedItems(List<CheckoutItemRequest> selectedItems) {
+    public UserOrderResponseDTO createCheckoutBySelectedItems(List<CheckoutItemRequestDTO> selectedItems) {
 
         // Lấy user hiện tại
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -229,7 +229,7 @@ public class PaymentService {
 
         // Tạo map productId → quantity user muốn mua
         Map<String, Integer> quantityMap = selectedItems.stream()
-                .collect(Collectors.toMap(CheckoutItemRequest::getProductId, CheckoutItemRequest::getQuantity));
+                .collect(Collectors.toMap(CheckoutItemRequestDTO::getProductId, CheckoutItemRequestDTO::getQuantity));
 
         // Lọc ra các cartItem liên quan
         List<CartItem> itemsToBuy = cart.getCartItems().stream()

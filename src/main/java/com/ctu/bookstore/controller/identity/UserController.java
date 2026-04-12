@@ -1,14 +1,13 @@
 package com.ctu.bookstore.controller.identity;
 
-import com.ctu.bookstore.dto.request.identity.UserUpdateRequest;
-import com.ctu.bookstore.dto.respone.ApiRespone;
-import com.ctu.bookstore.dto.request.identity.UserRequest;
-import com.ctu.bookstore.dto.respone.identity.UserRespone;
-import com.ctu.bookstore.dto.respone.display.ProductResponse;
-import com.ctu.bookstore.dto.respone.payment.UserOrderResponse;
+import com.ctu.bookstore.dto.request.identity.UserUpdateRequestDTO;
+import com.ctu.bookstore.dto.respone.ApiResponeDTO;
+import com.ctu.bookstore.dto.request.identity.UserRequestDTO;
+import com.ctu.bookstore.dto.respone.identity.UserResponeDTO;
+import com.ctu.bookstore.dto.respone.display.ProductResponseDTO;
+import com.ctu.bookstore.dto.respone.payment.UserOrderResponseDTO;
 import com.ctu.bookstore.entity.identity.User;
 import com.ctu.bookstore.entity.payment.InforCheckout;
-import com.ctu.bookstore.mapper.identity.UserMapper;
 import com.ctu.bookstore.mapper.display.ProductMapper;
 import com.ctu.bookstore.mapper.payment.UserOrderMapper;
 import com.ctu.bookstore.repository.identity.UserRepository;
@@ -30,74 +29,70 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
     UserService userService;
-    UserMapper userMapper;
     UserRepository userRepository;
     UserOrderMapper userOrderMapper;
     CommentService commentService;
     ProductMapper productMapper;
-//    @PostMapping
-//    public ApiRespone<UserRespone> createUser(@RequestBody @Valid UserRequest userRequest){
-//
-//         return ApiRespone.<UserRespone>builder()
-//                 .result(userMapper.toUserRespone(userService.createUser(userRequest)))
-//                 .build();
-//    }
+
     @PostMapping
-    public ApiRespone<UserRespone> createUser(@RequestBody @Valid UserRequest userRequest){
-        ApiRespone<User> apiRespone = new ApiRespone<>();
-        return ApiRespone.<UserRespone>builder()
-                .result(userService.createUser(userRequest))
+    public ApiResponeDTO<UserResponeDTO> createUser(@RequestBody @Valid UserRequestDTO userRequestDTO){
+        ApiResponeDTO<User> apiResponeDTO = new ApiResponeDTO<>();
+        return ApiResponeDTO.<UserResponeDTO>builder()
+                .result(userService.createUser(userRequestDTO))
                 .build();
     }
 
     @GetMapping
-    ApiRespone<List<UserRespone>> getUsers(){
-        return ApiRespone.<List<UserRespone>>builder()
+    ApiResponeDTO<List<UserResponeDTO>> getUsers(){
+        return ApiResponeDTO.<List<UserResponeDTO>>builder()
                 .result(userService.getUsers())
                 .build();
     }
 
     @GetMapping("/{userId}")
-    ApiRespone<UserRespone> getUser(@PathVariable("userId") String userId){
-        return ApiRespone.<UserRespone>builder()
+    ApiResponeDTO<UserResponeDTO> getUser(@PathVariable("userId") String userId){
+        return ApiResponeDTO.<UserResponeDTO>builder()
                 .result(userService.getUser(userId))
                 .build();
     }
 
+    // User khác gì Infor?????????????????????????
+    //??????????????????????????//
+
     @GetMapping("/info")
-    ApiRespone<UserRespone> getInfor(){
-        return ApiRespone.<UserRespone>builder()
+    ApiResponeDTO<UserResponeDTO> getInfor(){
+        return ApiResponeDTO.<UserResponeDTO>builder()
                 .result(userService.getMyInfor())
                 .build();
     }
 
     @GetMapping("/info-checkout")
-    ApiRespone<InforCheckout> getInforCheckout(){
-        return ApiRespone.<InforCheckout>builder()
+    ApiResponeDTO<InforCheckout> getInforCheckout(){
+        return ApiResponeDTO.<InforCheckout>builder()
                 .result(userService.getInforCheckout())
                 .build();
     }
 
     @PutMapping("/{userId}")
-    public ApiRespone<UserRespone> updateUser(@RequestBody UserUpdateRequest userRequestBody ){
+    public ApiResponeDTO<UserResponeDTO> updateUser(@RequestBody UserUpdateRequestDTO userRequestBody ){
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(name).orElseThrow(()-> new RuntimeException("Khong tim thay user trong user controller"));
-        return ApiRespone.<UserRespone>builder()
+        return ApiResponeDTO.<UserResponeDTO>builder()
                 .result(userService.updateUser(user.getId(),userRequestBody))
                 .build();
     }
 
     @GetMapping("/orders")
-    public ApiRespone<List<UserOrderResponse>> getAllUserOrder(){
-        return ApiRespone.<List<UserOrderResponse>>builder()
+    public ApiResponeDTO<List<UserOrderResponseDTO>> getAllUserOrder(){
+        return ApiResponeDTO.<List<UserOrderResponseDTO>>builder()
                 .result(userService.getAllOrders().stream()
                         .map(order -> userOrderMapper.toUserOrderResponse(order)).toList())
                 .build();
     }
 
     @GetMapping("/productAllowComment")
-    public ApiRespone<List<ProductResponse>> getProductAllowComment(){
-        return  ApiRespone.<List<ProductResponse>>builder()
+    public ApiResponeDTO<List<ProductResponseDTO>> getProductAllowComment(){
+        return  ApiResponeDTO.<List<ProductResponseDTO>>builder()
                 .result(commentService.getAllProductAllowComment().stream()
                         .map(product -> productMapper.toProductResponse(product)).toList())
                 .build();

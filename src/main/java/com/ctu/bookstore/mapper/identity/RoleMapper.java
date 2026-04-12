@@ -1,7 +1,7 @@
 package com.ctu.bookstore.mapper.identity;
 
-import com.ctu.bookstore.dto.request.identity.RoleRequest;
-import com.ctu.bookstore.dto.respone.identity.RoleRespone;
+import com.ctu.bookstore.dto.request.identity.RoleRequestDTO;
+import com.ctu.bookstore.dto.respone.identity.RoleResponeDTO;
 import com.ctu.bookstore.entity.identity.Role;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
     @Mapping(target = "permissions", ignore = true)
-    Role toRole(RoleRequest roleRequest);
+    Role toRole(RoleRequestDTO roleRequestDTO);
 
-    RoleRespone toRoleRespone(Role role);
+    RoleResponeDTO toRoleRespone(Role role);
 }

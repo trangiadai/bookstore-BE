@@ -1,6 +1,6 @@
 package com.ctu.bookstore.service.display;
 
-import com.ctu.bookstore.dto.request.display.CartItemRequest;
+import com.ctu.bookstore.dto.request.display.CartItemRequestDTO;
 import com.ctu.bookstore.entity.identity.User;
 import com.ctu.bookstore.entity.display.Cart;
 import com.ctu.bookstore.entity.display.CartItem;
@@ -35,7 +35,7 @@ public class CartService {
     UserService userService;
     @Autowired
     CartMapper cartMapper;
-    public Cart addOrUpdateCart(String userId, CartItemRequest cartItemRequest){
+    public Cart addOrUpdateCart(String userId, CartItemRequestDTO cartItemRequestDTO){
         User user = userRepository.findById(userId)
                 .orElseThrow(()->new RuntimeException("User not exist to create cart"));
 //        Cart cart = cartRepository.findByUserId(userId).orElseGet(
@@ -56,22 +56,22 @@ public class CartService {
 
             cart = cartRepository.save(cart);  // ⭐ PHẢI SAVE NGAY
         }
-        Product product = productRepository.findById(cartItemRequest.getProductId())
+        Product product = productRepository.findById(cartItemRequestDTO.getProductId())
                 .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
-        if (product.getQuantity() < cartItemRequest.getQuantity()) {
+        if (product.getQuantity() < cartItemRequestDTO.getQuantity()) {
             throw new RuntimeException("Số lượng tồn kho không đủ.");
         }
         CartItem existingItem = cart.getCartItems().stream()
-                .filter(item->item.getProduct().getId().equals(cartItemRequest.getProductId()))
+                .filter(item->item.getProduct().getId().equals(cartItemRequestDTO.getProductId()))
                 .findFirst()
                 .orElse(null);
         if(existingItem!=null){
-            existingItem.setQuatity(existingItem.getQuatity()+cartItemRequest.getQuantity());
+            existingItem.setQuatity(existingItem.getQuatity()+ cartItemRequestDTO.getQuantity());
         }else {
             CartItem newItem = CartItem.builder()
                     .product(product)
                     .cart(cart)
-                    .quatity(cartItemRequest.getQuantity())
+                    .quatity(cartItemRequestDTO.getQuantity())
                     .build();
             cart.getCartItems().add(newItem);
         }

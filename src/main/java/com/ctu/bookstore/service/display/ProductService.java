@@ -1,14 +1,13 @@
 package com.ctu.bookstore.service.display;
 
-import com.ctu.bookstore.dto.request.display.ProductRequest;
-import com.ctu.bookstore.dto.respone.display.PageResponse;
-import com.ctu.bookstore.dto.respone.display.ProductResponse;
+import com.ctu.bookstore.dto.request.display.ProductRequestDTO;
+import com.ctu.bookstore.dto.respone.display.PageResponseDTO;
+import com.ctu.bookstore.dto.respone.display.ProductResponseDTO;
 import com.ctu.bookstore.entity.display.Category;
 import com.ctu.bookstore.entity.display.Product;
 import com.ctu.bookstore.entity.display.ProductImages;
 import com.ctu.bookstore.mapper.display.ProductMapper;
 import com.ctu.bookstore.repository.display.CategoryRepository;
-import com.ctu.bookstore.repository.display.ProductImagesRepository;
 import com.ctu.bookstore.repository.display.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -77,7 +75,7 @@ public class ProductService {
 //        product.setCreateDate(Instant.now());
 //        return productRepository.save(product);
 //    }
-    public Product create(ProductRequest request) throws IOException {
+    public Product create(ProductRequestDTO request) throws IOException {
         Product product = productMapper.toProduct(request);
 
         if (product.getId() == null) {
@@ -115,12 +113,12 @@ public class ProductService {
     }
 
 
-    public PageResponse<ProductResponse> findAll(int page, int size) {
+    public PageResponseDTO<ProductResponseDTO> findAll(int page, int size) {
 //        List<Product> products = productRepository.findAll();
         Sort sort = Sort.by("sellingPrice").descending();
         Pageable pageable = PageRequest.of(page-1,size,sort);
         var pageData = productRepository.findAll(pageable);
-        return PageResponse.<ProductResponse>builder()
+        return PageResponseDTO.<ProductResponseDTO>builder()
                 .currentPage(page)
                 .pageSize(pageData.getSize())
                 .totalPages(pageData.getTotalPages())
@@ -129,13 +127,13 @@ public class ProductService {
                 .build();
     }
 
-    public ProductResponse findById(String id) {
+    public ProductResponseDTO findById(String id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm với id: " + id));
 
         return productMapper.toProductResponse(product);
     }
-    public ProductResponse update(String id, ProductRequest request) throws IOException {
+    public ProductResponseDTO update(String id, ProductRequestDTO request) throws IOException {
 
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm với id: " + id));
@@ -201,7 +199,7 @@ public class ProductService {
 
         return productMapper.toProductResponse(updated);
     }
-    public PageResponse<ProductResponse> filterByPrice(
+    public PageResponseDTO<ProductResponseDTO> filterByPrice(
             Double minPrice,
             Double maxPrice,
             int page,
@@ -213,7 +211,7 @@ public class ProductService {
         Page<Product> pageData =
                 productRepository.findBySellingPriceBetween(minPrice, maxPrice, pageable);
 
-        return PageResponse.<ProductResponse>builder()
+        return PageResponseDTO.<ProductResponseDTO>builder()
                 .currentPage(page)
                 .pageSize(pageData.getSize())
                 .totalPages(pageData.getTotalPages())
@@ -228,7 +226,7 @@ public class ProductService {
         var product = productRepository.findById(productId);
         productRepository.delete(product.get());
     }
-    public PageResponse<ProductResponse> filterByCategory(
+    public PageResponseDTO<ProductResponseDTO> filterByCategory(
             String categoryId,
             int page,
             int size
@@ -242,7 +240,7 @@ public class ProductService {
 
         Page<Product> pageData = productRepository.findByCategory_Id(categoryId, pageable);
 
-        return PageResponse.<ProductResponse>builder()
+        return PageResponseDTO.<ProductResponseDTO>builder()
                 .currentPage(page)
                 .pageSize(pageData.getSize())
                 .totalPages(pageData.getTotalPages())
@@ -256,7 +254,7 @@ public class ProductService {
 
 
     // ⭐ Lọc theo rating (cho phép khoảng min-max)
-    public PageResponse<ProductResponse> filterByRating(
+    public PageResponseDTO<ProductResponseDTO> filterByRating(
             Double minStars,
             Double maxStars,
             int page,
@@ -271,7 +269,7 @@ public class ProductService {
         Page<Product> pageData =
                 productRepository.findByAverageStarsBetween(minStars, maxStars, pageable);
 
-        return PageResponse.<ProductResponse>builder()
+        return PageResponseDTO.<ProductResponseDTO>builder()
                 .currentPage(page)
                 .pageSize(pageData.getSize())
                 .totalPages(pageData.getTotalPages())
@@ -284,7 +282,7 @@ public class ProductService {
     }
 
     // Nếu bạn thích kiểu ">= X sao" thay vì min-max:
-    public PageResponse<ProductResponse> filterByMinRating(
+    public PageResponseDTO<ProductResponseDTO> filterByMinRating(
             Double minStars,
             int page,
             int size
@@ -297,7 +295,7 @@ public class ProductService {
         Page<Product> pageData =
                 productRepository.findByAverageStarsGreaterThanEqual(minStars, pageable);
 
-        return PageResponse.<ProductResponse>builder()
+        return PageResponseDTO.<ProductResponseDTO>builder()
                 .currentPage(page)
                 .pageSize(pageData.getSize())
                 .totalPages(pageData.getTotalPages())

@@ -1,7 +1,7 @@
 package com.ctu.bookstore.mapper.display;
 
 
-import com.ctu.bookstore.dto.respone.display.CartResponse;
+import com.ctu.bookstore.dto.respone.display.CartResponseDTO;
 import com.ctu.bookstore.entity.display.Cart;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -10,7 +10,7 @@ import org.mapstruct.Mapping;
 public interface CartMapper {
         @Mapping(source = "user.id", target = "userId") // Map trường user.id sang userId
         @Mapping(target = "totalAmount", expression = "java(mapTotalAmount(cart))") // Tính tổng tiền
-        CartResponse toCartResponse(Cart cart);
+        CartResponseDTO toCartResponse(Cart cart);
 
 
         default Double mapTotalAmount(Cart cart) {

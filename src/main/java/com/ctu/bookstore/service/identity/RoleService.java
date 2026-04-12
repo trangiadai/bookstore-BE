@@ -1,7 +1,7 @@
 package com.ctu.bookstore.service.identity;
 
-import com.ctu.bookstore.dto.request.identity.RoleRequest;
-import com.ctu.bookstore.dto.respone.identity.RoleRespone;
+import com.ctu.bookstore.dto.request.identity.RoleRequestDTO;
+import com.ctu.bookstore.dto.respone.identity.RoleResponeDTO;
 import com.ctu.bookstore.mapper.identity.RoleMapper;
 import com.ctu.bookstore.repository.identity.PermissionRepository;
 import com.ctu.bookstore.repository.identity.RoleRepository;
@@ -23,7 +23,7 @@ public class RoleService {
     PermissionRepository permissionRepository;
     RoleMapper roleMapper;
 
-    public RoleRespone create(RoleRequest request){
+    public RoleResponeDTO create(RoleRequestDTO request){
         var role = roleMapper.toRole(request);
         System.out.println("role: "+role);
         var permissions = permissionRepository.findAllById(request.getPermissions());
@@ -35,7 +35,7 @@ public class RoleService {
         return roleMapper.toRoleRespone(role);
     }
 
-    public List<RoleRespone> getAll(){
+    public List<RoleResponeDTO> getAll(){
         return roleRepository.findAll()
                 .stream()
                 .map(roleMapper::toRoleRespone)

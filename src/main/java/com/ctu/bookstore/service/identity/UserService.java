@@ -1,8 +1,8 @@
 package com.ctu.bookstore.service.identity;
 
-import com.ctu.bookstore.dto.request.identity.UserRequest;
-import com.ctu.bookstore.dto.request.identity.UserUpdateRequest;
-import com.ctu.bookstore.dto.respone.identity.UserRespone;
+import com.ctu.bookstore.dto.request.identity.UserRequestDTO;
+import com.ctu.bookstore.dto.request.identity.UserUpdateRequestDTO;
+import com.ctu.bookstore.dto.respone.identity.UserResponeDTO;
 import com.ctu.bookstore.entity.identity.User;
 //import com.ctu.bookstore.entity.identity.Role;
 import com.ctu.bookstore.entity.payment.InforCheckout;
@@ -41,14 +41,14 @@ public class UserService {
 
     @Autowired
     private RoleRepository roleRepository;
-    public UserRespone createUser(UserRequest userRequest){
-        if (userRepository.existsByUsername(userRequest.getUsername()))
+    public UserResponeDTO createUser(UserRequestDTO userRequestDTO){
+        if (userRepository.existsByUsername(userRequestDTO.getUsername()))
             throw new AppException(ErrorCode.USER_EXISTED);
 
-        User user = userMapper.toUser(userRequest);
+        User user = userMapper.toUser(userRequestDTO);
         System.out.println("User trong CreateUser, userService: "+ user);
         System.out.println("Password TRƯỚC ENCODE: " + user.getPassword());
-        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
         System.out.println("Password SAU ENCODE: " + user.getPassword());
         HashSet<String> roles = new HashSet<>();
         roles.add(Role.USER.name());
@@ -56,7 +56,7 @@ public class UserService {
                 .name(user.getLastname()+ user.getFirstname())
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
-                .adress(user.getAdress())
+                .address(user.getAddress())
                 .voucher("bạn chưa nhập voucher")
                 .note("bạn chưa có ghi chú cho đơn hàng")
                 .build();
@@ -68,17 +68,17 @@ public class UserService {
     }
 //    @PreAuthorize("hasRole('ADMIN8')"
     @PreAuthorize("hasAuthority('APPROVE_POST')")
-    public List<UserRespone> getUsers(){
+    public List<UserResponeDTO> getUsers(){
         return userRepository.findAll().stream()
                 .map(userMapper::toUserRespone).toList();
     }
-    public UserRespone getUser(String id){
+    public UserResponeDTO getUser(String id){
         log.info("In method get user by Id");
         return userMapper.toUserRespone(userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
     @PostAuthorize("returnObject.username == authentication.name")
-    public UserRespone getMyInfor(){
+    public UserResponeDTO getMyInfor(){
         SecurityContextHolder securityContextHolder = new SecurityContextHolder();
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
@@ -94,7 +94,7 @@ public class UserService {
         User user = userRepository.findByUsername(name).orElseThrow(()-> new RuntimeException("Không tìm được user trong user service"));
         return user.getInforCheckout();
     }
-    public UserRespone updateUser(String id, UserUpdateRequest req){
+    public UserResponeDTO updateUser(String id, UserUpdateRequestDTO req){
 
          User user = userRepository.findById(id)
                  .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
@@ -126,9 +126,9 @@ public class UserService {
             user.setEmail(req.getEmail());
             inforCheckout.setEmail(req.getEmail());
 
-        if (req.getAdress() != null)
-            user.setAdress(req.getAdress());
-            inforCheckout.setAdress(req.getAdress());
+        if (req.getAddress() != null)
+            user.setAddress(req.getAddress());
+            inforCheckout.setAddress(req.getAddress());
 //        userMapper.updateUser(user,req);
 
 //         user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));

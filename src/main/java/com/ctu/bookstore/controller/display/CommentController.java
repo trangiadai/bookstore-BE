@@ -1,14 +1,13 @@
 package com.ctu.bookstore.controller.display;
 
-import com.ctu.bookstore.dto.request.display.CommentRequest;
-import com.ctu.bookstore.dto.respone.ApiRespone;
-import com.ctu.bookstore.dto.respone.display.CommentResponse;
+import com.ctu.bookstore.dto.request.display.CommentRequestDTO;
+import com.ctu.bookstore.dto.respone.ApiResponeDTO;
+import com.ctu.bookstore.dto.respone.display.CommentResponseDTO;
 import com.ctu.bookstore.entity.display.Comment;
 import com.ctu.bookstore.mapper.display.CommentMapper;
 import com.ctu.bookstore.service.display.CommentService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
@@ -24,20 +23,20 @@ public class CommentController {
     CommentMapper commentMapper;
 
     @PostMapping("/{productId}")
-    public ApiRespone<CommentResponse> createReview(@Valid @RequestBody CommentRequest request)
+    public ApiResponeDTO<CommentResponseDTO> createReview(@Valid @RequestBody CommentRequestDTO request)
     {
-        return ApiRespone.<CommentResponse>builder()
+        return ApiResponeDTO.<CommentResponseDTO>builder()
                 .result(commentService.createComment(request))
                 .build();
     }
 
     @GetMapping("/{productId}")
-    public ApiRespone<List<CommentResponse>> getCommentOfProduct(@PathVariable String productId) {
+    public ApiResponeDTO<List<CommentResponseDTO>> getCommentOfProduct(@PathVariable String productId) {
         List<Comment> comments = commentService.getCommentOfProduct(productId);
-        List<CommentResponse> responses = comments.stream()
+        List<CommentResponseDTO> responses = comments.stream()
                 .map(commentMapper::toCommentResponse)
                 .toList();
-        return ApiRespone.<List<CommentResponse>>builder()
+        return ApiResponeDTO.<List<CommentResponseDTO>>builder()
                 .result(responses)
                 .build();
     }

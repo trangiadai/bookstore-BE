@@ -1,9 +1,9 @@
 package com.ctu.bookstore.controller.display;
 
-import com.ctu.bookstore.dto.request.display.ProductRequest;
-import com.ctu.bookstore.dto.respone.ApiRespone;
-import com.ctu.bookstore.dto.respone.display.PageResponse;
-import com.ctu.bookstore.dto.respone.display.ProductResponse;
+import com.ctu.bookstore.dto.request.display.ProductRequestDTO;
+import com.ctu.bookstore.dto.respone.ApiResponeDTO;
+import com.ctu.bookstore.dto.respone.display.PageResponseDTO;
+import com.ctu.bookstore.dto.respone.display.ProductResponseDTO;
 import com.ctu.bookstore.entity.display.Product;
 import com.ctu.bookstore.mapper.display.ProductMapper;
 import com.ctu.bookstore.service.display.ProductService;
@@ -26,78 +26,79 @@ public class ProductController {
     ProductMapper productMapper ;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiRespone<ProductResponse> createProduct(@ModelAttribute ProductRequest productRequest
+    public ApiResponeDTO<ProductResponseDTO> createProduct(@ModelAttribute ProductRequestDTO productRequestDTO
     ) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        Product newProduct = productService.create(productRequest);
+        Product newProduct = productService.create(productRequestDTO);
 
-        return ApiRespone.<ProductResponse>builder()
+        return ApiResponeDTO.<ProductResponseDTO>builder()
                 .result(productMapper.toProductResponse(newProduct))
                 .build();
     }
 
     @GetMapping
-    public ApiRespone<PageResponse<ProductResponse>> getAllProducts(
+    public ApiResponeDTO<PageResponseDTO<ProductResponseDTO>> getAllProducts(
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @RequestParam(value = "size", required = false, defaultValue = "6") int size
     ){
-        PageResponse<ProductResponse> products = productService.findAll(page, size);
-        return ApiRespone.<PageResponse<ProductResponse>>builder()
+        PageResponseDTO<ProductResponseDTO> products = productService.findAll(page, size);
+        return ApiResponeDTO.<PageResponseDTO<ProductResponseDTO>>builder()
                 .result(products)
                 .build();
     }
 
     @GetMapping("/{id}")
-    public ApiRespone<ProductResponse> getProductById(@PathVariable String id) {
-        ProductResponse product = productService.findById(id);
-        return ApiRespone.<ProductResponse>builder()
+    public ApiResponeDTO<ProductResponseDTO> getProductById(@PathVariable String id) {
+        ProductResponseDTO product = productService.findById(id);
+        return ApiResponeDTO.<ProductResponseDTO>builder()
                 .result(product)
                 .build();
     }
 
-    // NHớ chọn danh mục trước khi update, danh mục rổng là không update được
-    @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiRespone<ProductResponse> updateProduct(
+    // Nhớ chọn danh mục trước khi update, danh mục rổng là không update được
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponeDTO<ProductResponseDTO> updateProduct(
             @PathVariable String id,
-            @ModelAttribute ProductRequest productRequest) throws IOException {
+            @ModelAttribute ProductRequestDTO productRequestDTO) throws IOException {
 
-        ProductResponse updatedProduct = productService.update(id, productRequest);
+        ProductResponseDTO updatedProduct = productService.update(id, productRequestDTO);
         System.out.println(id);
-        return ApiRespone.<ProductResponse>builder()
+        return ApiResponeDTO.<ProductResponseDTO>builder()
                 .result(updatedProduct)
                 .build();
     }
+
     @GetMapping("/filter-by-price")
-    public ApiRespone<PageResponse<ProductResponse>> filterByPrice(
+    public ApiResponeDTO<PageResponseDTO<ProductResponseDTO>> filterByPrice(
             @RequestParam Double minPrice,
             @RequestParam Double maxPrice,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "6") int size
 
     ) {
-        PageResponse<ProductResponse> result =
+        PageResponseDTO<ProductResponseDTO> result =
                 productService.filterByPrice(minPrice, maxPrice, page, size);
 
-        return ApiRespone.<PageResponse<ProductResponse>>builder()
+        return ApiResponeDTO.<PageResponseDTO<ProductResponseDTO>>builder()
                 .result(result)
                 .build();
     }
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable String id){
         productService.delete(id);
     }
 
     @GetMapping("/filter-by-category")
-    public ApiRespone<PageResponse<ProductResponse>> filterByCategory(
+    public ApiResponeDTO<PageResponseDTO<ProductResponseDTO>> filterByCategory(
             @RequestParam String categoryId,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @RequestParam(value = "size", required = false, defaultValue = "6") int size
     ) {
-        PageResponse<ProductResponse> result =
+        PageResponseDTO<ProductResponseDTO> result =
                 productService.filterByCategory(categoryId, page, size);
 
-        return ApiRespone.<PageResponse<ProductResponse>>builder()
+        return ApiResponeDTO.<PageResponseDTO<ProductResponseDTO>>builder()
                 .result(result)
                 .build();
     }
@@ -105,31 +106,31 @@ public class ProductController {
 
     // ⭐ Lọc theo rating: cho phép min-max, ví dụ: ?minStars=3&maxStars=5
     @GetMapping("/filter-by-rating")
-    public ApiRespone<PageResponse<ProductResponse>> filterByRating(
+    public ApiResponeDTO<PageResponseDTO<ProductResponseDTO>> filterByRating(
             @RequestParam(required = false) Double minStars,
             @RequestParam(required = false) Double maxStars,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "6") int size
     ) {
-        PageResponse<ProductResponse> result =
+        PageResponseDTO<ProductResponseDTO> result =
                 productService.filterByRating(minStars, maxStars, page, size);
 
-        return ApiRespone.<PageResponse<ProductResponse>>builder()
+        return ApiResponeDTO.<PageResponseDTO<ProductResponseDTO>>builder()
                 .result(result)
                 .build();
     }
 
     // Nếu bạn muốn endpoint kiểu ">= X sao"
     @GetMapping("/filter-by-min-rating")
-    public ApiRespone<PageResponse<ProductResponse>> filterByMinRating(
+    public ApiResponeDTO<PageResponseDTO<ProductResponseDTO>> filterByMinRating(
             @RequestParam Double minStars,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "6") int size
     ) {
-        PageResponse<ProductResponse> result =
+        PageResponseDTO<ProductResponseDTO> result =
                 productService.filterByMinRating(minStars, page, size);
 
-        return ApiRespone.<PageResponse<ProductResponse>>builder()
+        return ApiResponeDTO.<PageResponseDTO<ProductResponseDTO>>builder()
                 .result(result)
                 .build();
     }

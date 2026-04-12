@@ -1,7 +1,7 @@
 package com.ctu.bookstore.configuration;
 
-import com.ctu.bookstore.dto.request.identity.IntrospectRequest;
-import com.ctu.bookstore.dto.respone.IntrospectRespone;
+import com.ctu.bookstore.dto.request.identity.IntrospectRequestDTO;
+import com.ctu.bookstore.dto.respone.IntrospectResponeDTO;
 import com.ctu.bookstore.service.identity.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class CustomJwtDecoder implements JwtDecoder {
     @Override
     public Jwt decode(String token) throws JwtException {
         try {
-            IntrospectRespone response = authenticationService.introspect(IntrospectRequest.builder()
+            IntrospectResponeDTO response = authenticationService.introspect(IntrospectRequestDTO.builder()
                             .token(token)
                     .build());
             if (!response.isValid())

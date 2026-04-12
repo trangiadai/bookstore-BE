@@ -1,6 +1,6 @@
 package com.ctu.bookstore.service.payment;
 
-import com.ctu.bookstore.dto.request.payment.InforCheckoutRequestUpdate;
+import com.ctu.bookstore.dto.request.payment.InforCheckoutRequestUpdateDTO;
 import com.ctu.bookstore.entity.payment.InforCheckout;
 import com.ctu.bookstore.repository.identity.UserRepository;
 import com.ctu.bookstore.service.identity.UserService;
@@ -19,7 +19,7 @@ public class InforCheckoutService {
         var user = userRepository.findByUsername(name);
         return user.get().getInforCheckout();
     }
-    public InforCheckout updateInfo(InforCheckoutRequestUpdate requestUpdate){
+    public InforCheckout updateInfo(InforCheckoutRequestUpdateDTO requestUpdate){
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         var user = userRepository.findByUsername(name);
         InforCheckout info = user.get().getInforCheckout();
@@ -32,8 +32,8 @@ public class InforCheckoutService {
         if (requestUpdate.getEmail() != null && requestUpdate.getEmail() != ""){
             info.setEmail(requestUpdate.getEmail());
         }
-        if (requestUpdate.getAdress() != null || requestUpdate.getAdress() != ""){
-            info.setAdress(requestUpdate.getAdress());
+        if (requestUpdate.getAddress() != null || requestUpdate.getAddress() != ""){
+            info.setAddress(requestUpdate.getAddress());
         }
         if (requestUpdate.getNote() != null || requestUpdate.getNote() != ""){
             info.setNote(requestUpdate.getNote());

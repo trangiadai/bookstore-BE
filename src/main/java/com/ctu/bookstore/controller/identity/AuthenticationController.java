@@ -1,11 +1,11 @@
 package com.ctu.bookstore.controller.identity;
 
-import com.ctu.bookstore.dto.request.identity.AuthenticationRequest;
-import com.ctu.bookstore.dto.request.identity.IntrospectRequest;
-import com.ctu.bookstore.dto.request.identity.LogoutRequest;
-import com.ctu.bookstore.dto.respone.ApiRespone;
-import com.ctu.bookstore.dto.respone.identity.AuthenticationRespone;
-import com.ctu.bookstore.dto.respone.IntrospectRespone;
+import com.ctu.bookstore.dto.request.identity.AuthenticationRequestDTO;
+import com.ctu.bookstore.dto.request.identity.IntrospectRequestDTO;
+import com.ctu.bookstore.dto.request.identity.LogoutRequestDTO;
+import com.ctu.bookstore.dto.respone.ApiResponeDTO;
+import com.ctu.bookstore.dto.respone.identity.AuthenticationResponeDTO;
+import com.ctu.bookstore.dto.respone.IntrospectResponeDTO;
 import com.ctu.bookstore.service.identity.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
@@ -24,28 +24,28 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/token")
-    public ApiRespone<AuthenticationRespone>authenticate(@RequestBody AuthenticationRequest authenticationRequest){
-        AuthenticationRespone result = authenticationService.authenticate(authenticationRequest);
+    public ApiResponeDTO<AuthenticationResponeDTO> authenticate(@RequestBody AuthenticationRequestDTO authenticationRequestDTO){
+        AuthenticationResponeDTO result = authenticationService.authenticate(authenticationRequestDTO);
 
-        return ApiRespone.<AuthenticationRespone>builder()
+        return ApiResponeDTO.<AuthenticationResponeDTO>builder()
                 .result(result)
                 .build();
     }
 
     @PostMapping("/introspect")
-    public ApiRespone<IntrospectRespone>introspect(@RequestBody IntrospectRequest introspectRequest) throws ParseException, JOSEException {
-        IntrospectRespone result = authenticationService.introspect(introspectRequest);
+    public ApiResponeDTO<IntrospectResponeDTO> introspect(@RequestBody IntrospectRequestDTO introspectRequestDTO) throws ParseException, JOSEException {
+        IntrospectResponeDTO result = authenticationService.introspect(introspectRequestDTO);
 
-        return ApiRespone.<IntrospectRespone>builder()
+        return ApiResponeDTO.<IntrospectResponeDTO>builder()
                 .result(result)
                 .build();
     }
 
     @PostMapping("/logout")
-    public ApiRespone<Void>logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+    public ApiResponeDTO<Void> logout(@RequestBody LogoutRequestDTO request) throws ParseException, JOSEException {
         authenticationService.logout(request);
 
-        return ApiRespone.<Void>builder()
+        return ApiResponeDTO.<Void>builder()
                 .build();
     }
 }

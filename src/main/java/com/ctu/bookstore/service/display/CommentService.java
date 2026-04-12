@@ -1,7 +1,7 @@
 package com.ctu.bookstore.service.display;
 
-import com.ctu.bookstore.dto.request.display.CommentRequest;
-import com.ctu.bookstore.dto.respone.display.CommentResponse;
+import com.ctu.bookstore.dto.request.display.CommentRequestDTO;
+import com.ctu.bookstore.dto.respone.display.CommentResponseDTO;
 import com.ctu.bookstore.entity.display.Comment;
 import com.ctu.bookstore.entity.display.Product;
 import com.ctu.bookstore.entity.payment.UserOrder;
@@ -35,7 +35,7 @@ public class CommentService {
     CommentMapper commentMapper;
     UserService userService;
     @Transactional
-    public CommentResponse createComment(CommentRequest request) {
+    public CommentResponseDTO createComment(CommentRequestDTO request) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         var user = userRepository.findByUsername(name)
                 .orElseThrow(() -> new RuntimeException("User not found"));

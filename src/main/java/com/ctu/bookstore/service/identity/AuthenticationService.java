@@ -1,10 +1,10 @@
 package com.ctu.bookstore.service.identity;
 
-import com.ctu.bookstore.dto.request.identity.AuthenticationRequest;
-import com.ctu.bookstore.dto.request.identity.IntrospectRequest;
-import com.ctu.bookstore.dto.request.identity.LogoutRequest;
-import com.ctu.bookstore.dto.respone.identity.AuthenticationRespone;
-import com.ctu.bookstore.dto.respone.IntrospectRespone;
+import com.ctu.bookstore.dto.request.identity.AuthenticationRequestDTO;
+import com.ctu.bookstore.dto.request.identity.IntrospectRequestDTO;
+import com.ctu.bookstore.dto.request.identity.LogoutRequestDTO;
+import com.ctu.bookstore.dto.respone.identity.AuthenticationResponeDTO;
+import com.ctu.bookstore.dto.respone.IntrospectResponeDTO;
 import com.ctu.bookstore.entity.identity.InvalidatedToken;
 import com.ctu.bookstore.entity.identity.User;
 import com.ctu.bookstore.exception.AppException;
@@ -46,18 +46,18 @@ public class AuthenticationService {
     @Value("${jwt.signerKey}")
     String SIGNER_KEY;
 
-    public AuthenticationRespone authenticate(AuthenticationRequest authenticationRequest){
-        User user = userRepository.findByUsername(authenticationRequest.getUsername())
+    public AuthenticationResponeDTO authenticate(AuthenticationRequestDTO authenticationRequestDTO){
+        User user = userRepository.findByUsername(authenticationRequestDTO.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        boolean authenticated = passwordEncoder.matches(authenticationRequest.getPassword(), user.getPassword());
+        boolean authenticated = passwordEncoder.matches(authenticationRequestDTO.getPassword(), user.getPassword());
         if(!authenticated){
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
         String token = generateToken(user);
 
-        return AuthenticationRespone.builder()
+        return AuthenticationResponeDTO.builder()
                 .token(token)
                 .authenticated(authenticated)
                 .build();
@@ -102,7 +102,7 @@ public class AuthenticationService {
         return stringJoiner.toString();
     }
 
-    public void logout(LogoutRequest request) throws ParseException, JOSEException {
+    public void logout(LogoutRequestDTO request) throws ParseException, JOSEException {
         var signToken = verifyToken(request.getToken());
 
         String jit = signToken.getJWTClaimsSet().getJWTID();
@@ -116,7 +116,7 @@ public class AuthenticationService {
         invalidatedTokenRepository.save(invalidatedToken);
     }
 
-    public IntrospectRespone introspect(IntrospectRequest request)
+    public IntrospectResponeDTO introspect(IntrospectRequestDTO request)
             throws JOSEException, ParseException {
 
         var token = request.getToken();
@@ -129,7 +129,7 @@ public class AuthenticationService {
             isValid = false;
         }
 
-        return IntrospectRespone.builder()
+        return IntrospectResponeDTO.builder()
                 .userName(
                         Objects.nonNull(jwt)
                                 ? jwt.getJWTClaimsSet().getSubject()

@@ -1,7 +1,6 @@
 package com.ctu.bookstore.service.display;
 
-import com.ctu.bookstore.dto.request.display.CategoryRequest;
-import com.ctu.bookstore.dto.respone.display.CategoryRespone;
+import com.ctu.bookstore.dto.request.display.CategoryRequestDTO;
 import com.ctu.bookstore.entity.display.Category;
 import com.ctu.bookstore.exception.AppException;
 import com.ctu.bookstore.exception.ErrorCode;
@@ -35,7 +34,7 @@ public class CategoryService {
                         HttpStatus.NOT_FOUND, "Category not found with id: " + id));
     }
     @Transactional
-    public Category create(CategoryRequest request){
+    public Category create(CategoryRequestDTO request){
         Category category = categoryMapper.toCategory(request);
         if (request.getParentId() != null && !request.getParentId().isEmpty()) {
             Category parent = categoryRepository.findById(request.getParentId())
@@ -62,7 +61,7 @@ public class CategoryService {
 
     // 🟡 2. Cập nhật danh mục
     @Transactional
-    public Category updateCategory(String id, CategoryRequest updatedCategory) {
+    public Category updateCategory(String id, CategoryRequestDTO updatedCategory) {
         Category existingCategory = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy danh mục có id = " + id));
 

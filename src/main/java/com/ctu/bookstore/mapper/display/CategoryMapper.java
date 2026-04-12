@@ -1,7 +1,7 @@
 package com.ctu.bookstore.mapper.display;
 
-import com.ctu.bookstore.dto.request.display.CategoryRequest;
-import com.ctu.bookstore.dto.respone.display.CategoryRespone;
+import com.ctu.bookstore.dto.request.display.CategoryRequestDTO;
+import com.ctu.bookstore.dto.respone.display.CategoryResponeDTO;
 import com.ctu.bookstore.entity.display.Category;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,14 +15,14 @@ public interface CategoryMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "parentCategory", ignore = true)
     @Mapping(target = "childCategory", ignore = true)
-    Category toCategory(CategoryRequest dto);
+    Category toCategory(CategoryRequestDTO dto);
 
     @Mapping(source = "parentCategory.id", target = "parentId")
     @Mapping(source = "parentCategory.nameCategory", target = "parentName")
     @Mapping(target = "children", ignore = true)
-    CategoryRespone toCategoryRespone(Category category);
+    CategoryResponeDTO toCategoryRespone(Category category);
 
-    default Set<CategoryRespone> toCategoryResponeSet(Set<Category> categories) {
+    default Set<CategoryResponeDTO> toCategoryResponeSet(Set<Category> categories) {
         if (categories == null) return Collections.emptySet();
         return categories.stream()
                 .map(this::toCategoryRespone)

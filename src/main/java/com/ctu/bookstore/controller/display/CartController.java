@@ -1,8 +1,8 @@
 package com.ctu.bookstore.controller.display;
 
-import com.ctu.bookstore.dto.request.display.CartItemRequest;
-import com.ctu.bookstore.dto.respone.ApiRespone;
-import com.ctu.bookstore.dto.respone.display.CartResponse;
+import com.ctu.bookstore.dto.request.display.CartItemRequestDTO;
+import com.ctu.bookstore.dto.respone.ApiResponeDTO;
+import com.ctu.bookstore.dto.respone.display.CartResponseDTO;
 import com.ctu.bookstore.entity.identity.User;
 import com.ctu.bookstore.entity.display.Cart;
 import com.ctu.bookstore.mapper.display.CartMapper;
@@ -25,27 +25,27 @@ public class CartController {
     CartRepository cartRepository;
     CartMapper cartMapper;
 
-    @PostMapping("/add")
-    public ApiRespone<CartResponse> addOrUpdateItem(@RequestBody CartItemRequest request){
+    @PostMapping
+    public ApiResponeDTO<CartResponseDTO> addOrUpdateItem(@RequestBody CartItemRequestDTO request){
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(userName).orElseThrow();
         String userId = user.getId();
         System.out.println("userID trong carService: "+ userId);
         Cart cart = cartService.addOrUpdateCart(userId,request);
-        return  ApiRespone.<CartResponse>builder()
+        return  ApiResponeDTO.<CartResponseDTO>builder()
                 .result(cartMapper.toCartResponse(cart))
                 .build();
     }
 
-    @GetMapping("/my-cart")
-    public ApiRespone<CartResponse> getMyCart(){
-        return ApiRespone.<CartResponse>builder()
+    @GetMapping
+    public ApiResponeDTO<CartResponseDTO> getMyCart(){
+        return ApiResponeDTO.<CartResponseDTO>builder()
                 .result(cartMapper.toCartResponse(cartService.getMyCart()))
                 .build();
     }
 
     // This is delete CART not delete the item in the cart
-    @DeleteMapping("/delete")
+    @DeleteMapping
     public void deleteCart(){
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(name).orElseThrow(()->new RuntimeException("khong có user trong cart controller"));
@@ -53,31 +53,31 @@ public class CartController {
         cartService.delete(cart.getId());
     }
 
-    @DeleteMapping("/delete-item/{id}")
-    public void deleteCartItem(@PathVariable("id") String cartItemId){
-       cartService.deleteCartItem(cartItemId);
+    @DeleteMapping("/{id}")
+    public void deleteItem(@PathVariable("id") String itemId){
+       cartService.deleteCartItem(itemId);
     }
 
     @GetMapping("/size")
-    public ApiRespone<Integer> sizeOfCart(){
-        return ApiRespone.<Integer>builder()
+    public ApiResponeDTO<Integer> sizeOfCart(){
+        return ApiResponeDTO.<Integer>builder()
                 .result(cartService.getSumMyCart())
                 .build();
     }
 
-    @PutMapping("/increase-item/{id}")
-    public ApiRespone<CartResponse> increase(@PathVariable("id") String productId){
+    @PutMapping("/{id}")
+    public ApiResponeDTO<CartResponseDTO> incrementQuantity(@PathVariable("id") String itemId){
 
-        return ApiRespone.<CartResponse>builder()
-                .result(cartMapper.toCartResponse(cartService.incrementItem(productId)))
+        return ApiResponeDTO.<CartResponseDTO>builder()
+                .result(cartMapper.toCartResponse(cartService.incrementItem(itemId)))
                 .build();
     }
 
-    @PutMapping("/decrease-item/{id}")
-    public ApiRespone<CartResponse> decrease(@PathVariable("id") String productId ){
+    @PutMapping("/{id}")
+    public ApiResponeDTO<CartResponseDTO> decrementQuantity(@PathVariable("id") String itemId ){
 
-        return ApiRespone.<CartResponse>builder()
-                .result(cartMapper.toCartResponse(cartService.decrementItem(productId)))
+        return ApiResponeDTO.<CartResponseDTO>builder()
+                .result(cartMapper.toCartResponse(cartService.decrementItem(itemId)))
                 .build();
     }
 

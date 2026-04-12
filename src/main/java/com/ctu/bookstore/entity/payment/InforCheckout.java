@@ -22,7 +22,7 @@ public class InforCheckout {
     String name;
     String email;
     String phoneNumber;
-    String adress;
+    String address;
     String voucher;
     String note;
 }

@@ -1,7 +1,7 @@
 package com.ctu.bookstore.service.payment;
 
-import com.ctu.bookstore.dto.respone.display.BestSellingProductResponse;
-import com.ctu.bookstore.dto.respone.payment.UserOrderResponse;
+import com.ctu.bookstore.dto.respone.display.BestSellingProductResponseDTO;
+import com.ctu.bookstore.dto.respone.payment.UserOrderResponseDTO;
 import com.ctu.bookstore.entity.payment.UserOrder;
 import com.ctu.bookstore.enums.OrderStatus;
 import com.ctu.bookstore.mapper.payment.UserOrderMapper;
@@ -20,14 +20,14 @@ public class UserOrderService {
     private final UserOrderMapper userOrderMapper;
     private final OrderItemRepository orderItemRepository;
 
-    public List<UserOrderResponse> getAllOrders(){
+    public List<UserOrderResponseDTO> getAllOrders(){
         return userOrderRepository.findAll()
                 .stream()
                 .map(userOrder -> userOrderMapper.toUserOrderResponse(userOrder))
                 .toList();
     }
 
-    public List<UserOrderResponse> getOrdersByUserId(String userId) {
+    public List<UserOrderResponseDTO> getOrdersByUserId(String userId) {
         return userOrderRepository
                 .findByUserIdOrderByOrderDateDesc(userId)
                 .stream()
@@ -35,7 +35,7 @@ public class UserOrderService {
                 .toList();
     }
 
-    public UserOrderResponse updateOrderStatus(Long orderId, OrderStatus newStatus) {
+    public UserOrderResponseDTO updateOrderStatus(Long orderId, OrderStatus newStatus) {
 
         UserOrder order = userOrderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
@@ -46,7 +46,7 @@ public class UserOrderService {
 
         return userOrderMapper.toUserOrderResponse(order);
     }
-    public List<BestSellingProductResponse> getBestSellingProducts(int limit) {
+    public List<BestSellingProductResponseDTO> getBestSellingProducts(int limit) {
         // Chỉ tính những đơn đã thanh toán / đã giao
         List<OrderStatus> validStatuses = List.of(
                 OrderStatus.PAID,
