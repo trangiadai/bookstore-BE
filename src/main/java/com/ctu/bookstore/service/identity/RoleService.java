@@ -1,7 +1,7 @@
 package com.ctu.bookstore.service.identity;
 
 import com.ctu.bookstore.dto.request.identity.RoleRequestDTO;
-import com.ctu.bookstore.dto.respone.identity.RoleResponeDTO;
+import com.ctu.bookstore.dto.response.identity.RoleResposeDTO;
 import com.ctu.bookstore.mapper.identity.RoleMapper;
 import com.ctu.bookstore.repository.identity.PermissionRepository;
 import com.ctu.bookstore.repository.identity.RoleRepository;
@@ -16,14 +16,14 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class RoleService {
     RoleRepository roleRepository;
     PermissionRepository permissionRepository;
     RoleMapper roleMapper;
 
-    public RoleResponeDTO create(RoleRequestDTO request){
+    public RoleResposeDTO create(RoleRequestDTO request){
         var role = roleMapper.toRole(request);
         System.out.println("role: "+role);
         var permissions = permissionRepository.findAllById(request.getPermissions());
@@ -35,7 +35,7 @@ public class RoleService {
         return roleMapper.toRoleRespone(role);
     }
 
-    public List<RoleResponeDTO> getAll(){
+    public List<RoleResposeDTO> getAll(){
         return roleRepository.findAll()
                 .stream()
                 .map(roleMapper::toRoleRespone)

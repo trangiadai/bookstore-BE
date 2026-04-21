@@ -1,4 +1,4 @@
-package com.ctu.bookstore.dto.respone.chat;
+package com.ctu.bookstore.dto.response.chat;
 
 import com.ctu.bookstore.entity.chat.ParticipantInfo;
 import lombok.*;

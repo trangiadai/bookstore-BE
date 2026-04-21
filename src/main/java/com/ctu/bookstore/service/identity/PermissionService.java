@@ -1,7 +1,7 @@
 package com.ctu.bookstore.service.identity;
 
 import com.ctu.bookstore.dto.request.identity.PermissionRequestDTO;
-import com.ctu.bookstore.dto.respone.identity.PermissionResponeDTO;
+import com.ctu.bookstore.dto.response.identity.PermissionResponeDTO;
 import com.ctu.bookstore.entity.identity.Permission;
 import com.ctu.bookstore.mapper.identity.PermissionMapper;
 import com.ctu.bookstore.repository.identity.PermissionRepository;
@@ -15,8 +15,8 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class PermissionService {
     PermissionRepository permissionRepository;
     PermissionMapper permissionMapper;
@@ -24,6 +24,7 @@ public class PermissionService {
     public PermissionResponeDTO create(PermissionRequestDTO request){
         Permission permission = permissionMapper.toPermission(request);
         permission = permissionRepository.save(permission);
+
         return permissionMapper.toPermissionRespone(permission);
     }
 

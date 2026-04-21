@@ -3,8 +3,8 @@ package com.ctu.bookstore.service.identity;
 import com.ctu.bookstore.dto.request.identity.AuthenticationRequestDTO;
 import com.ctu.bookstore.dto.request.identity.IntrospectRequestDTO;
 import com.ctu.bookstore.dto.request.identity.LogoutRequestDTO;
-import com.ctu.bookstore.dto.respone.identity.AuthenticationResponeDTO;
-import com.ctu.bookstore.dto.respone.IntrospectResponeDTO;
+import com.ctu.bookstore.dto.response.identity.AuthenticationResponeDTO;
+import com.ctu.bookstore.dto.response.IntrospectResponseDTO;
 import com.ctu.bookstore.entity.identity.InvalidatedToken;
 import com.ctu.bookstore.entity.identity.User;
 import com.ctu.bookstore.exception.AppException;
@@ -22,7 +22,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -35,13 +34,16 @@ import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.UUID;
 
-@Slf4j
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class AuthenticationService {
     UserRepository userRepository;
     InvalidatedTokenRepository invalidatedTokenRepository;
+    PasswordEncoder passwordEncoder;
+
     @NonFinal // để không bị đưa vào constructor (vì đã dùng @RequiredArg phía trên)
     @Value("${jwt.signerKey}")
     String SIGNER_KEY;
@@ -49,7 +51,6 @@ public class AuthenticationService {
     public AuthenticationResponeDTO authenticate(AuthenticationRequestDTO authenticationRequestDTO){
         User user = userRepository.findByUsername(authenticationRequestDTO.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         boolean authenticated = passwordEncoder.matches(authenticationRequestDTO.getPassword(), user.getPassword());
         if(!authenticated){
             throw new AppException(ErrorCode.UNAUTHENTICATED);
@@ -64,7 +65,6 @@ public class AuthenticationService {
     }
 
     private String generateToken(User user){
-        // Using nimbus library to generate Token
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .issuer("BookStore_BE")
@@ -73,10 +73,8 @@ public class AuthenticationService {
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())
-                .claim("scope",buildScope(user))
+                .claim("scope", buildScope(user))
                 .build();
-        //khi nào hiểu được buildScope ròi thi quay lại đây tự hoi xem có cần truyền toàn bộ user vào hàm này để tạo token hay khong
-        // hay chỉ cần mỗi username và role
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
         JWSObject jwsObject = new JWSObject(header,payload);
         try {
@@ -92,15 +90,24 @@ public class AuthenticationService {
         StringJoiner stringJoiner = new StringJoiner(" ");
         System.out.println("role của user trong buildScope " + user.getRoles());
         if (!CollectionUtils.isEmpty(user.getRoles()))
-            user.getRoles().forEach(role -> {
-                stringJoiner.add("ROLE_" + role.getName());
-                if (!CollectionUtils.isEmpty(role.getPermissions()))
-                    role.getPermissions()
-                            .forEach(permission -> stringJoiner.add(permission.getName()));
-            });
+            user.getRoles().forEach(stringJoiner::add);
+
         System.out.println("stringJoiner của buildScope trong AuthenticationService "+stringJoiner);
         return stringJoiner.toString();
     }
+//    private String buildScope(User user){
+//        StringJoiner stringJoiner = new StringJoiner(" ");
+//        System.out.println("role của user trong buildScope " + user.getRoles());
+//        if (!CollectionUtils.isEmpty(user.getRoles()))
+//            user.getRoles().forEach(role -> {
+//                stringJoiner.add("ROLE_" + role.getName());
+//                if (!CollectionUtils.isEmpty(role.getPermissions()))
+//                    role.getPermissions()
+//                            .forEach(permission -> stringJoiner.add(permission.getName()));
+//            });
+//        System.out.println("stringJoiner của buildScope trong AuthenticationService "+stringJoiner);
+//        return stringJoiner.toString();
+//    }
 
     public void logout(LogoutRequestDTO request) throws ParseException, JOSEException {
         var signToken = verifyToken(request.getToken());
@@ -116,7 +123,7 @@ public class AuthenticationService {
         invalidatedTokenRepository.save(invalidatedToken);
     }
 
-    public IntrospectResponeDTO introspect(IntrospectRequestDTO request)
+    public IntrospectResponseDTO introspect(IntrospectRequestDTO request)
             throws JOSEException, ParseException {
 
         var token = request.getToken();
@@ -129,7 +136,7 @@ public class AuthenticationService {
             isValid = false;
         }
 
-        return IntrospectResponeDTO.builder()
+        return IntrospectResponseDTO.builder()
                 .userName(
                         Objects.nonNull(jwt)
                                 ? jwt.getJWTClaimsSet().getSubject()

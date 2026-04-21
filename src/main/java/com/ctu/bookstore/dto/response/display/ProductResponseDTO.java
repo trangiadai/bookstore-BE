@@ -1,4 +1,4 @@
-package com.ctu.bookstore.dto.respone.display;
+package com.ctu.bookstore.dto.response.display;
 
 import com.ctu.bookstore.entity.display.ProductImages;
 import lombok.Data;

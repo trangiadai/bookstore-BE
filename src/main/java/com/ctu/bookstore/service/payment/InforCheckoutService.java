@@ -4,21 +4,26 @@ import com.ctu.bookstore.dto.request.payment.InforCheckoutRequestUpdateDTO;
 import com.ctu.bookstore.entity.payment.InforCheckout;
 import com.ctu.bookstore.repository.identity.UserRepository;
 import com.ctu.bookstore.service.identity.UserService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class InforCheckoutService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private UserService userService;
+    UserRepository userRepository;
+    UserService userService;
+
     public InforCheckout getMyInforCheckout(){
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         var user = userRepository.findByUsername(name);
         return user.get().getInforCheckout();
     }
+
     public InforCheckout updateInfo(InforCheckoutRequestUpdateDTO requestUpdate){
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         var user = userRepository.findByUsername(name);

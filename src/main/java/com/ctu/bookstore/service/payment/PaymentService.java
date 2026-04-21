@@ -1,7 +1,7 @@
 package com.ctu.bookstore.service.payment;
 
 import com.ctu.bookstore.dto.request.payment.CheckoutItemRequestDTO;
-import com.ctu.bookstore.dto.respone.payment.UserOrderResponseDTO;
+import com.ctu.bookstore.dto.response.payment.UserOrderResponseDTO;
 import com.ctu.bookstore.entity.identity.User;
 import com.ctu.bookstore.entity.display.Cart;
 import com.ctu.bookstore.entity.display.CartItem;
@@ -22,6 +22,9 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import jakarta.transaction.Transactional;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,20 +35,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PaymentService {
-    @Autowired
     UserRepository userRepository;
-    @Autowired
     CartRepository cartRepository;
-    @Autowired
     ProductRepository productRepository;
-    @Autowired
     OrderRepository orderRepository;
     @Value("${stripe.apiKey}")
     private String stripeSecretKey;
-    @Autowired
     CartService cartService;
-    @Autowired
     UserOrderMapper userOrderMapper;
 
     @Transactional
@@ -150,6 +149,7 @@ public class PaymentService {
                 .stripeCheckoutUrl(session.getUrl())
                 .build();
     }
+
     public UserOrderResponseDTO BuyByShipCOD(String userId){
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Giỏ hàng không tồn tại."));
@@ -211,6 +211,7 @@ public class PaymentService {
         newOrder = orderRepository.save(newOrder);
         return userOrderMapper.toUserOrderResponse(newOrder);
     }
+
     @Transactional
     public UserOrderResponseDTO createCheckoutBySelectedItems(List<CheckoutItemRequestDTO> selectedItems) {
 

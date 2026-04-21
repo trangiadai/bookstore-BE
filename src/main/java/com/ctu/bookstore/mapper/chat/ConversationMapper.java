@@ -1,7 +1,7 @@
 package com.ctu.bookstore.mapper.chat;
 
 import com.ctu.bookstore.dto.request.chat.ConversationRequestDTO;
-import com.ctu.bookstore.dto.respone.chat.ConversationResponseDTO;
+import com.ctu.bookstore.dto.response.chat.ConversationResponseDTO;
 import com.ctu.bookstore.entity.chat.Conversation;
 import org.mapstruct.Mapper;
 

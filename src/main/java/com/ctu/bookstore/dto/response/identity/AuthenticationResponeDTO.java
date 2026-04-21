@@ -1,4 +1,4 @@
-package com.ctu.bookstore.dto.respone.identity;
+package com.ctu.bookstore.dto.response.identity;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

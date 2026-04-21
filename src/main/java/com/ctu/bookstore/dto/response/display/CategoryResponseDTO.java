@@ -1,4 +1,4 @@
-package com.ctu.bookstore.dto.respone.display;
+package com.ctu.bookstore.dto.response.display;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryResponeDTO {
+public class CategoryResponseDTO {
     String id;
     String nameCategory;
 //    private String slug;
@@ -23,5 +23,5 @@ public class CategoryResponeDTO {
     String parentName ; // Giúp UI hiển thị dễ dàng
 
     // Danh sách các danh mục con (giúp xây dựng cấu trúc cây/lồng nhau)
-    Set<CategoryResponeDTO> children = new HashSet<>();
+    Set<CategoryResponseDTO> children = new HashSet<>();
 }

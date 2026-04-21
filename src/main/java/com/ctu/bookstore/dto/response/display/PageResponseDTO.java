@@ -1,4 +1,4 @@
-package com.ctu.bookstore.dto.respone.display;
+package com.ctu.bookstore.dto.response.display;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

@@ -11,7 +11,6 @@ import java.util.List;
 @RequestMapping("/search")
 @RequiredArgsConstructor
 public class ProductSearchController {
-
     private final ProductSearchService productSearchService;
     private final ProductRepository productRepository;
 

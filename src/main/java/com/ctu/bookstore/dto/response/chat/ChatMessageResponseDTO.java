@@ -1,4 +1,4 @@
-package com.ctu.bookstore.dto.respone.chat;
+package com.ctu.bookstore.dto.response.chat;
 
 import com.ctu.bookstore.entity.chat.ParticipantInfo;
 import lombok.*;
@@ -11,7 +11,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ChatMessageResponeDTO {
+public class ChatMessageResponseDTO {
     String id;
     String conversationId;
     boolean me;

@@ -1,13 +1,15 @@
 package com.ctu.bookstore.service.payment;
 
-import com.ctu.bookstore.dto.respone.display.BestSellingProductResponseDTO;
-import com.ctu.bookstore.dto.respone.payment.UserOrderResponseDTO;
+import com.ctu.bookstore.dto.response.display.BestSellingProductResponseDTO;
+import com.ctu.bookstore.dto.response.payment.UserOrderResponseDTO;
 import com.ctu.bookstore.entity.payment.UserOrder;
 import com.ctu.bookstore.enums.OrderStatus;
 import com.ctu.bookstore.mapper.payment.UserOrderMapper;
 import com.ctu.bookstore.repository.payment.OrderItemRepository;
 import com.ctu.bookstore.repository.payment.UserOrderRepository;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +17,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserOrderService {
-    private final UserOrderRepository userOrderRepository;
-    private final UserOrderMapper userOrderMapper;
-    private final OrderItemRepository orderItemRepository;
+    UserOrderRepository userOrderRepository;
+    UserOrderMapper userOrderMapper;
+    OrderItemRepository orderItemRepository;
 
     public List<UserOrderResponseDTO> getAllOrders(){
         return userOrderRepository.findAll()
@@ -46,6 +49,7 @@ public class UserOrderService {
 
         return userOrderMapper.toUserOrderResponse(order);
     }
+
     public List<BestSellingProductResponseDTO> getBestSellingProducts(int limit) {
         // Chỉ tính những đơn đã thanh toán / đã giao
         List<OrderStatus> validStatuses = List.of(

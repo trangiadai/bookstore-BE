@@ -8,6 +8,9 @@ import com.ctu.bookstore.mapper.display.CategoryMapper;
 import com.ctu.bookstore.repository.display.CategoryRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,22 +20,24 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CategoryService {
-    @Autowired
-    private CategoryMapper categoryMapper;
-    @Autowired
-    private CategoryRepository categoryRepository;
+    CategoryMapper categoryMapper;
+    CategoryRepository categoryRepository;
 //    public Category create(CategoryRequest request){
 //        Category category = categoryMapper.toCategory(request);
 //
 //        return categoryRepository.save(category);
 //    }
     // Helper: Ném ngoại lệ khi không tìm thấy
+
     private Category findByIdOrThrow(String id) {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Category not found with id: " + id));
     }
+
     @Transactional
     public Category create(CategoryRequestDTO request){
         Category category = categoryMapper.toCategory(request);
@@ -49,6 +54,7 @@ public class CategoryService {
         Category savedCategory = categoryRepository.save(category);
         return savedCategory;
     }
+
     @Transactional(readOnly = true)
     public Category getByID(String id){
         return  categoryRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));

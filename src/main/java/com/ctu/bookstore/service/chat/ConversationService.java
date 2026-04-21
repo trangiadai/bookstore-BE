@@ -1,13 +1,14 @@
 package com.ctu.bookstore.service.chat;
 
 import com.ctu.bookstore.dto.request.chat.ConversationRequestDTO;
-import com.ctu.bookstore.dto.respone.chat.ConversationResponseDTO;
+import com.ctu.bookstore.dto.response.chat.ConversationResponseDTO;
 import com.ctu.bookstore.entity.chat.Conversation;
 import com.ctu.bookstore.entity.chat.ParticipantInfo;
 import com.ctu.bookstore.mapper.chat.ConversationMapper;
 import com.ctu.bookstore.repository.identity.UserRepository;
 import com.ctu.bookstore.repository.conversation.ConversationRepository;
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,14 +19,11 @@ import java.util.List;
 import java.util.StringJoiner;
 
 @Service
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ConversationService {
-
-    @Autowired
     UserRepository userRepository;
-    @Autowired
     ConversationRepository conversationRepository;
-    @Autowired
     ConversationMapper conversationMapper;
 
     public List<ConversationResponseDTO> myConversations() {

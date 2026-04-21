@@ -2,8 +2,8 @@ package com.ctu.bookstore.controller.identity;
 
 
 import com.ctu.bookstore.dto.request.identity.PermissionRequestDTO;
-import com.ctu.bookstore.dto.respone.ApiResponeDTO;
-import com.ctu.bookstore.dto.respone.identity.PermissionResponeDTO;
+import com.ctu.bookstore.dto.response.ApiResponseDTO;
+import com.ctu.bookstore.dto.response.identity.PermissionResponeDTO;
 import com.ctu.bookstore.service.identity.PermissionService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,22 +22,22 @@ public class PermissionController {
     PermissionService permissionService;
 
     @PostMapping
-    ApiResponeDTO<PermissionResponeDTO> create(@RequestBody PermissionRequestDTO request){
-        return ApiResponeDTO.<PermissionResponeDTO>builder()
+    ApiResponseDTO<PermissionResponeDTO> create(@RequestBody PermissionRequestDTO request){
+        return ApiResponseDTO.<PermissionResponeDTO>builder()
                 .result(permissionService.create(request))
                 .build();
     }
 
     @GetMapping
-    ApiResponeDTO<List<PermissionResponeDTO>> getAll(){
-        return ApiResponeDTO.<List<PermissionResponeDTO>>builder()
+    ApiResponseDTO<List<PermissionResponeDTO>> getAll(){
+        return ApiResponseDTO.<List<PermissionResponeDTO>>builder()
                 .result(permissionService.getAll())
                 .build();
     }
 
     @DeleteMapping("/{permission}")
-    ApiResponeDTO<Void> delete(@PathVariable String permission){
+    ApiResponseDTO<Void> delete(@PathVariable String permission){
         permissionService.delete(permission);
-        return ApiResponeDTO.<Void>builder().build();
+        return ApiResponseDTO.<Void>builder().build();
     }
 }

@@ -1,8 +1,8 @@
 package com.ctu.bookstore.controller.identity;
 
 import com.ctu.bookstore.dto.request.identity.RoleRequestDTO;
-import com.ctu.bookstore.dto.respone.ApiResponeDTO;
-import com.ctu.bookstore.dto.respone.identity.RoleResponeDTO;
+import com.ctu.bookstore.dto.response.ApiResponseDTO;
+import com.ctu.bookstore.dto.response.identity.RoleResposeDTO;
 import com.ctu.bookstore.service.identity.RoleService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,22 +22,22 @@ public class RoleController {
     RoleService roleService;
 
     @PostMapping
-    ApiResponeDTO<RoleResponeDTO> create(@RequestBody RoleRequestDTO request){
-        return ApiResponeDTO.<RoleResponeDTO>builder()
+    ApiResponseDTO<RoleResposeDTO> create(@RequestBody RoleRequestDTO request){
+        return ApiResponseDTO.<RoleResposeDTO>builder()
                 .result(roleService.create(request))
                 .build();
     }
 
     @GetMapping
-    ApiResponeDTO<List<RoleResponeDTO>> getAll(){
-        return ApiResponeDTO.<List<RoleResponeDTO>>builder()
+    ApiResponseDTO<List<RoleResposeDTO>> getAll(){
+        return ApiResponseDTO.<List<RoleResposeDTO>>builder()
                 .result(roleService.getAll())
                 .build();
     }
 
     @DeleteMapping("/{role}")
-    ApiResponeDTO<Void> delete(@PathVariable String role){
+    ApiResponseDTO<Void> delete(@PathVariable String role){
         roleService.delete(role);
-        return ApiResponeDTO.<Void>builder().build();
+        return ApiResponseDTO.<Void>builder().build();
     }
 }

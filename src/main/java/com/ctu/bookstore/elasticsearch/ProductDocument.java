@@ -13,13 +13,9 @@ import org.springframework.data.elasticsearch.annotations.Document;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductDocument {
-
     @Id
     String id;
-
     String nameProduct;
-
     Double sellingPrice;
-
     Double averageStars;
 }

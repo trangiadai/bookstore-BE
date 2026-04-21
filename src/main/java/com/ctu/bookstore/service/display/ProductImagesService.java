@@ -4,7 +4,9 @@ import com.cloudinary.utils.ObjectUtils;
 import com.ctu.bookstore.entity.display.ProductImages;
 import com.ctu.bookstore.repository.display.ProductImagesRepository;
 import com.ctu.bookstore.repository.display.ProductImagesRepository;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,9 +16,10 @@ import java.util.Objects;
 import java.util.UUID;
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProductImagesService {
-    private final Cloudinary cloudinary;
-    private final ProductImagesRepository productImagesRepository;
+    Cloudinary cloudinary;
+    ProductImagesRepository productImagesRepository;
 
     public String uploadImage(MultipartFile file) throws IOException {
         String publicId = UUID.randomUUID().toString();
@@ -44,9 +47,7 @@ public class ProductImagesService {
 
 
     public void deleteImage(String imageId) throws IOException {
-
         cloudinary.uploader().destroy(imageId, ObjectUtils.emptyMap());
-
         productImagesRepository.deleteById(imageId);
     }
 

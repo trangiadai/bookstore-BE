@@ -1,6 +1,6 @@
-package com.ctu.bookstore.dto.respone.identity;
+package com.ctu.bookstore.dto.response.identity;
 
-import com.ctu.bookstore.dto.respone.payment.UserOrderResponseDTO;
+import com.ctu.bookstore.dto.response.payment.UserOrderResponseDTO;
 import com.ctu.bookstore.enums.Gender;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -29,6 +29,6 @@ public class UserResponeDTO {
     @Email(message = "EMAIL_INVALID")
     String email;
     String address;
-    Set<RoleResponeDTO> roles;
-    Set<UserOrderResponseDTO> userOrderResponsDTOS;
+    Set<RoleResposeDTO> roles;
+    Set<UserOrderResponseDTO> userOrderResponseDTO;
 }

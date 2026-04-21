@@ -1,6 +1,6 @@
 package com.ctu.bookstore.mapper.display;
 
-import com.ctu.bookstore.dto.respone.display.CartItemResponseDTO;
+import com.ctu.bookstore.dto.response.display.CartItemResponseDTO;
 import com.ctu.bookstore.entity.display.CartItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

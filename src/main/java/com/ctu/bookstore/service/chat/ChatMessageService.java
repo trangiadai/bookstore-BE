@@ -2,7 +2,7 @@ package com.ctu.bookstore.service.chat;
 
 import com.corundumstudio.socketio.SocketIOServer;
 import com.ctu.bookstore.dto.request.chat.ChatMessageRequestDTO;
-import com.ctu.bookstore.dto.respone.chat.ChatMessageResponeDTO;
+import com.ctu.bookstore.dto.response.chat.ChatMessageResponseDTO;
 import com.ctu.bookstore.entity.chat.ChatMessage;
 import com.ctu.bookstore.entity.chat.ParticipantInfo;
 import com.ctu.bookstore.entity.chat.WebSocketSession;
@@ -12,6 +12,9 @@ import com.ctu.bookstore.repository.identity.UserRepository;
 import com.ctu.bookstore.repository.conversation.ChatMessageRepository;
 import com.ctu.bookstore.repository.conversation.ConversationRepository;
 import com.ctu.bookstore.repository.conversation.WebSocketSessionRepository;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,24 +25,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ChatMessageService {
-
-    @Autowired
     ConversationRepository conversationRepository;
-    @Autowired
     UserRepository userRepository;
-    @Autowired
     UserMapper userMapper;
-    @Autowired
     ChatMessageMapper chatMessageMapper;
-    @Autowired
     ChatMessageRepository chatMessageRepository;
-    @Autowired
     SocketIOServer socketIOServer;
-    @Autowired
     WebSocketSessionRepository webSocketSessionRepository;
 
-    public List<ChatMessageResponeDTO> getMessages(String conversationId) {
+    public List<ChatMessageResponseDTO> getMessages(String conversationId) {
         var conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new RuntimeException("Conversation not found with id: " + conversationId));
 
@@ -81,7 +78,7 @@ public class ChatMessageService {
 //
 //        return toChatMessageRespone(chatMessage);
 //    }
-public ChatMessageResponeDTO create(ChatMessageRequestDTO chatMessageRequestDTO) {
+public ChatMessageResponseDTO create(ChatMessageRequestDTO chatMessageRequestDTO) {
     String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
     var user = userRepository.findByUsername(username)
@@ -107,7 +104,7 @@ public ChatMessageResponeDTO create(ChatMessageRequestDTO chatMessageRequestDTO)
     String message = chatMessage.getMessage();
 
     // Tạo response object đúng chuẩn
-    ChatMessageResponeDTO resp = toChatMessageRespone(chatMessage);
+    ChatMessageResponseDTO resp = toChatMessageRespone(chatMessage);
     System.out.println("======= BEFORE EMIT =======");
     System.out.println("SOCKET CLIENTS: " + socketIOServer.getAllClients().size());
     System.out.println("MESSAGE: " + message);
@@ -136,7 +133,7 @@ public ChatMessageResponeDTO create(ChatMessageRequestDTO chatMessageRequestDTO)
 //        chatMessageRespone.setMe(user.getId().equals(chatMessageRespone.getSender().getUserId()));
 //        return chatMessageRespone;
 //    }
-    private ChatMessageResponeDTO toChatMessageRespone(ChatMessage chatMessage){
+    private ChatMessageResponseDTO toChatMessageRespone(ChatMessage chatMessage){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         var user = userRepository.findByUsername(username);
         var chatMessageRespone = chatMessageMapper.toChatMessageRespone(chatMessage);

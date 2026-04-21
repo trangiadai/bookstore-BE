@@ -1,4 +1,4 @@
-package com.ctu.bookstore.dto.respone;
+package com.ctu.bookstore.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class IntrospectResponeDTO {
+public class IntrospectResponseDTO {
     boolean valid;
     String userName; // dùng để lưu sessionId trong socketHandler
 }

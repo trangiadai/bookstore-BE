@@ -2,7 +2,7 @@ package com.ctu.bookstore.service.identity;
 
 import com.ctu.bookstore.dto.request.identity.UserRequestDTO;
 import com.ctu.bookstore.dto.request.identity.UserUpdateRequestDTO;
-import com.ctu.bookstore.dto.respone.identity.UserResponeDTO;
+import com.ctu.bookstore.dto.response.identity.UserResponeDTO;
 import com.ctu.bookstore.entity.identity.User;
 //import com.ctu.bookstore.entity.identity.Role;
 import com.ctu.bookstore.entity.payment.InforCheckout;
@@ -14,8 +14,10 @@ import com.ctu.bookstore.mapper.identity.RoleMapper;
 import com.ctu.bookstore.mapper.identity.UserMapper;
 import com.ctu.bookstore.repository.identity.RoleRepository;
 import com.ctu.bookstore.repository.identity.UserRepository;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,20 +29,16 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private UserMapper userMapper;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
+    UserRepository userRepository;
+    UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
     RoleMapper roleMapper;
+    RoleRepository roleRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
     public UserResponeDTO createUser(UserRequestDTO userRequestDTO){
         if (userRepository.existsByUsername(userRequestDTO.getUsername()))
             throw new AppException(ErrorCode.USER_EXISTED);
@@ -61,31 +59,25 @@ public class UserService {
                 .note("bạn chưa có ghi chú cho đơn hàng")
                 .build();
         user.setInforCheckout(inforCheckout);
-//        user.setRoles(roles);
+        user.setRoles(roles);
 
        return  userMapper.toUserRespone(userRepository.save(user));
 
     }
-//    @PreAuthorize("hasRole('ADMIN8')"
-    @PreAuthorize("hasAuthority('APPROVE_POST')")
+
+    @PreAuthorize("hasRole('ADMIN')") //Tạo 1 cái proxy ngay trước cái method này, kiểm tra trước lúc gọi mehtod phải có role là ADMIN thì mới gọi đc
     public List<UserResponeDTO> getUsers(){
         return userRepository.findAll().stream()
                 .map(userMapper::toUserRespone).toList();
     }
-    public UserResponeDTO getUser(String id){
-        log.info("In method get user by Id");
-        return userMapper.toUserRespone(userRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
-    }
+
+    // Tạo 1 cái proxy, cho phép gọi hàm trước, chạy xong sau đó nếu thỏa đều kiện proxy thì mới cho return còn không thì sẽ chặn lại
     @PostAuthorize("returnObject.username == authentication.name")
-    public UserResponeDTO getMyInfor(){
-        SecurityContextHolder securityContextHolder = new SecurityContextHolder();
+    public UserResponeDTO getMyInfo(){
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
-        String n = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println("name trong user service " + n);
-        User user = userRepository.findByUsername(n).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
-        System.out.println("id user trong user service " + user.getId());
+        User user = userRepository.findByUsername(name).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+
         return userMapper.toUserRespone(user);
     }
 
@@ -94,6 +86,7 @@ public class UserService {
         User user = userRepository.findByUsername(name).orElseThrow(()-> new RuntimeException("Không tìm được user trong user service"));
         return user.getInforCheckout();
     }
+
     public UserResponeDTO updateUser(String id, UserUpdateRequestDTO req){
 
          User user = userRepository.findById(id)
@@ -150,12 +143,14 @@ public class UserService {
 
 
     }
+
     public void updateInforCheckout(InforCheckout inforCheckout){
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         var user = userRepository.findByUsername(name);
         user.get().setInforCheckout(inforCheckout);
         userRepository.save(user.get());
     }
+
     public Set<UserOrder> getAllOrders(){
         var name = SecurityContextHolder.getContext().getAuthentication().getName();
         var user = userRepository.findByUsername(name);

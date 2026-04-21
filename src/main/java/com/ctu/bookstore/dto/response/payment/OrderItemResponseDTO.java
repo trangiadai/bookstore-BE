@@ -1,4 +1,4 @@
-package com.ctu.bookstore.dto.respone.payment;
+package com.ctu.bookstore.dto.response.payment;
 
 import lombok.*;
 

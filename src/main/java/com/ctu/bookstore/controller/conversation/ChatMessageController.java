@@ -1,8 +1,8 @@
 package com.ctu.bookstore.controller.conversation;
 
 import com.ctu.bookstore.dto.request.chat.ChatMessageRequestDTO;
-import com.ctu.bookstore.dto.respone.ApiResponeDTO;
-import com.ctu.bookstore.dto.respone.chat.ChatMessageResponeDTO;
+import com.ctu.bookstore.dto.response.ApiResponseDTO;
+import com.ctu.bookstore.dto.response.chat.ChatMessageResponseDTO;
 import com.ctu.bookstore.service.chat.ChatMessageService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -19,15 +19,15 @@ import java.util.List;
 public class ChatMessageController {
     ChatMessageService chatMessageService;
     @PostMapping
-    ApiResponeDTO<ChatMessageResponeDTO> create(@RequestBody @Valid ChatMessageRequestDTO request) {
-        return ApiResponeDTO.<ChatMessageResponeDTO>builder()
+    ApiResponseDTO<ChatMessageResponseDTO> create(@RequestBody @Valid ChatMessageRequestDTO request) {
+        return ApiResponseDTO.<ChatMessageResponseDTO>builder()
                 .result(chatMessageService.create(request))
                 .build();
     }
 
     @GetMapping
-    ApiResponeDTO<List<ChatMessageResponeDTO>> getMessages(@RequestParam("conversationId") String conversationId) {
-        return ApiResponeDTO.<List<ChatMessageResponeDTO>>builder()
+    ApiResponseDTO<List<ChatMessageResponseDTO>> getMessages(@RequestParam("conversationId") String conversationId) {
+        return ApiResponseDTO.<List<ChatMessageResponseDTO>>builder()
                 .result(chatMessageService.getMessages(conversationId))
                 .build();
     }

@@ -1,15 +1,17 @@
 package com.ctu.bookstore.service.display;
 
 import com.ctu.bookstore.dto.request.display.ProductRequestDTO;
-import com.ctu.bookstore.dto.respone.display.PageResponseDTO;
-import com.ctu.bookstore.dto.respone.display.ProductResponseDTO;
+import com.ctu.bookstore.dto.response.display.PageResponseDTO;
+import com.ctu.bookstore.dto.response.display.ProductResponseDTO;
 import com.ctu.bookstore.entity.display.Category;
 import com.ctu.bookstore.entity.display.Product;
 import com.ctu.bookstore.entity.display.ProductImages;
 import com.ctu.bookstore.mapper.display.ProductMapper;
 import com.ctu.bookstore.repository.display.CategoryRepository;
 import com.ctu.bookstore.repository.display.ProductRepository;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,11 +27,12 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProductService {
-    private final ProductMapper productMapper;
-    private final CategoryRepository categoryRepository;
-    private final ProductImagesService productImagesService;
-    private final ProductRepository productRepository;
+    ProductMapper productMapper;
+    CategoryRepository categoryRepository;
+    ProductImagesService productImagesService;
+    ProductRepository productRepository;
     //    public Product create(ProductRequest request) throws IOException {
 //        Product product = productMapper.toProduct(request);
 //
@@ -112,9 +115,7 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-
     public PageResponseDTO<ProductResponseDTO> findAll(int page, int size) {
-//        List<Product> products = productRepository.findAll();
         Sort sort = Sort.by("sellingPrice").descending();
         Pageable pageable = PageRequest.of(page-1,size,sort);
         var pageData = productRepository.findAll(pageable);
@@ -133,6 +134,7 @@ public class ProductService {
 
         return productMapper.toProductResponse(product);
     }
+
     public ProductResponseDTO update(String id, ProductRequestDTO request) throws IOException {
 
         Product product = productRepository.findById(id)
@@ -199,6 +201,7 @@ public class ProductService {
 
         return productMapper.toProductResponse(updated);
     }
+
     public PageResponseDTO<ProductResponseDTO> filterByPrice(
             Double minPrice,
             Double maxPrice,
@@ -222,10 +225,12 @@ public class ProductService {
                         .toList())
                 .build();
     }
+
     public void delete(String  productId){
         var product = productRepository.findById(productId);
         productRepository.delete(product.get());
     }
+
     public PageResponseDTO<ProductResponseDTO> filterByCategory(
             String categoryId,
             int page,
@@ -251,7 +256,6 @@ public class ProductService {
                         .toList())
                 .build();
     }
-
 
     // ⭐ Lọc theo rating (cho phép khoảng min-max)
     public PageResponseDTO<ProductResponseDTO> filterByRating(
@@ -306,5 +310,4 @@ public class ProductService {
                         .toList())
                 .build();
     }
-
 }

@@ -1,6 +1,6 @@
 package com.ctu.bookstore.repository.payment;
 
-import com.ctu.bookstore.dto.respone.display.BestSellingProductResponseDTO;
+import com.ctu.bookstore.dto.response.display.BestSellingProductResponseDTO;
 import com.ctu.bookstore.entity.payment.OrderItem;
 import com.ctu.bookstore.enums.OrderStatus;
 import org.springframework.data.domain.Page;

@@ -14,8 +14,6 @@ public class ProductSearchService {
 
     // Đồng bộ 1 sản phẩm vào Elasticsearch
     public void indexProduct(Product product) {
-
-
         ProductDocument doc = ProductDocument.builder()
                 .id(product.getId())
                 .nameProduct(product.getNameProduct())

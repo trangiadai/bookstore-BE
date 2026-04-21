@@ -1,7 +1,7 @@
 package com.ctu.bookstore.controller.payment;
 
-import com.ctu.bookstore.dto.respone.ApiResponeDTO;
-import com.ctu.bookstore.dto.respone.payment.UserOrderResponseDTO;
+import com.ctu.bookstore.dto.response.ApiResponseDTO;
+import com.ctu.bookstore.dto.response.payment.UserOrderResponseDTO;
 import com.ctu.bookstore.entity.identity.User;
 import com.ctu.bookstore.entity.payment.CheckoutRespone;
 import com.ctu.bookstore.repository.identity.UserRepository;
@@ -22,13 +22,13 @@ public class PaymentController {
     UserRepository userRepository;
 
     @PostMapping("/create-session")
-    public ApiResponeDTO<CheckoutRespone> createCheckoutSession() {
+    public ApiResponseDTO<CheckoutRespone> createCheckoutSession() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(()-> new RuntimeException("User không tồn tại trong payment controller"));
         try {
             CheckoutRespone response = paymentService.createCheckoutSession(user.getId());
-            return ApiResponeDTO.<CheckoutRespone>builder()
+            return ApiResponseDTO.<CheckoutRespone>builder()
                     .result(response)
                     .build();
         } catch (StripeException e) {
@@ -38,13 +38,13 @@ public class PaymentController {
     }
 
     @PostMapping("/create-shipCOD")
-    public ApiResponeDTO<UserOrderResponseDTO> createShipCOD() {
+    public ApiResponseDTO<UserOrderResponseDTO> createShipCOD() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(()-> new RuntimeException("User không tồn tại trong payment controller"));
         try {
             UserOrderResponseDTO response = paymentService.BuyByShipCOD(user.getId());
-            return ApiResponeDTO.<UserOrderResponseDTO>builder()
+            return ApiResponseDTO.<UserOrderResponseDTO>builder()
                     .result(response)
                     .build();
         } catch (RuntimeException e) {

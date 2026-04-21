@@ -2,7 +2,7 @@ package com.ctu.bookstore.mapper.identity;
 
 import com.ctu.bookstore.dto.request.identity.UserRequestDTO;
 import com.ctu.bookstore.dto.request.identity.UserUpdateRequestDTO;
-import com.ctu.bookstore.dto.respone.identity.UserResponeDTO;
+import com.ctu.bookstore.dto.response.identity.UserResponeDTO;
 import com.ctu.bookstore.entity.identity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

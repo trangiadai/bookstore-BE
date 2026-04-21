@@ -11,11 +11,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Slf4j
 @RequiredArgsConstructor
 public class WebSocketSessionService {
-    @Autowired
     WebSocketSessionRepository webSocketSessionRepository;
+
     public WebSocketSession create(WebSocketSession webSocketSession){
         return webSocketSessionRepository.save(webSocketSession);
     }

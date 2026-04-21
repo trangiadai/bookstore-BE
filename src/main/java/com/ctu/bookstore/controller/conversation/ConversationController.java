@@ -2,8 +2,8 @@ package com.ctu.bookstore.controller.conversation;
 
 
 import com.ctu.bookstore.dto.request.chat.ConversationRequestDTO;
-import com.ctu.bookstore.dto.respone.ApiResponeDTO;
-import com.ctu.bookstore.dto.respone.chat.ConversationResponseDTO;
+import com.ctu.bookstore.dto.response.ApiResponseDTO;
+import com.ctu.bookstore.dto.response.chat.ConversationResponseDTO;
 import com.ctu.bookstore.service.chat.ConversationService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -20,26 +20,26 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping("/conversations")
 public class ConversationController {
-//    @Autowired refactor version 1
     ConversationService conversationService;
 
     @PostMapping("/create")
-    ApiResponeDTO<ConversationResponseDTO> createConversation(@RequestBody @Valid ConversationRequestDTO request) {
-        return ApiResponeDTO.<ConversationResponseDTO>builder()
+    ApiResponseDTO<ConversationResponseDTO> createConversation(@RequestBody @Valid ConversationRequestDTO request) {
+        return ApiResponseDTO.<ConversationResponseDTO>builder()
                 .result(conversationService.create(request))
                 .build();
     }
+
     @PostMapping("/create-default")
-    ApiResponeDTO<ConversationResponseDTO> createConversation() {
+    ApiResponseDTO<ConversationResponseDTO> createConversation() {
         log.info("-------------------");
-        return ApiResponeDTO.<ConversationResponseDTO>builder()
+        return ApiResponseDTO.<ConversationResponseDTO>builder()
                 .result(conversationService.createDefault())
                 .build();
     }
 
     @GetMapping
-    ApiResponeDTO<List<ConversationResponseDTO>> myConversations() {
-        return ApiResponeDTO.<List<ConversationResponseDTO>>builder()
+    ApiResponseDTO<List<ConversationResponseDTO>> myConversations() {
+        return ApiResponseDTO.<List<ConversationResponseDTO>>builder()
                 .result(conversationService.myConversations())
                 .build();
     }

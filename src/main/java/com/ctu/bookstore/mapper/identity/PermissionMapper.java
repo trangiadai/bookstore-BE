@@ -1,7 +1,7 @@
 package com.ctu.bookstore.mapper.identity;
 
 import com.ctu.bookstore.dto.request.identity.PermissionRequestDTO;
-import com.ctu.bookstore.dto.respone.identity.PermissionResponeDTO;
+import com.ctu.bookstore.dto.response.identity.PermissionResponeDTO;
 import com.ctu.bookstore.entity.identity.Permission;
 import org.mapstruct.Mapper;
 

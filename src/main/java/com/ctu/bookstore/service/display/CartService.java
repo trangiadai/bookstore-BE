@@ -12,7 +12,9 @@ import com.ctu.bookstore.repository.display.CartRepository;
 import com.ctu.bookstore.repository.display.ProductRepository;
 import com.ctu.bookstore.service.identity.UserService;
 import jakarta.transaction.Transactional;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -21,20 +23,16 @@ import java.util.HashSet;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Transactional
 public class CartService {
-    @Autowired
     UserRepository userRepository;
-    @Autowired
     CartRepository cartRepository;
-    @Autowired
     ProductRepository productRepository;
-    @Autowired
     CartItemRepository cartItemRepository;
-    @Autowired
     UserService userService;
-    @Autowired
     CartMapper cartMapper;
+
     public Cart addOrUpdateCart(String userId, CartItemRequestDTO cartItemRequestDTO){
         User user = userRepository.findById(userId)
                 .orElseThrow(()->new RuntimeException("User not exist to create cart"));
@@ -54,7 +52,7 @@ public class CartService {
                     .cartItems(new HashSet<>())
                     .build();
 
-            cart = cartRepository.save(cart);  // ⭐ PHẢI SAVE NGAY
+            cart = cartRepository.save(cart);
         }
         Product product = productRepository.findById(cartItemRequestDTO.getProductId())
                 .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
@@ -87,6 +85,7 @@ public class CartService {
 
 
     }
+
     public int getSumMyCart() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -98,6 +97,7 @@ public class CartService {
 
         return cart.getCartItems().size();
     }
+
     @Transactional
     public Cart updateItemInCart(String productId, int quantity) {
         // Lấy user hiện tại từ security context
@@ -207,7 +207,6 @@ public Cart incrementItem(String productId) {
         return cart;
     }
 
-
     public CartItem decreaseQuantity(String cartId, String productId) {
 
         CartItem cartItem = cartItemRepository.findByCartIdAndProductId(cartId, productId)
@@ -225,8 +224,6 @@ public Cart incrementItem(String productId) {
         return cartItem;
     }
 
-
-
     public void delete(String id) {
         // Lấy cart từ DB
         Cart cart = cartRepository.findById(id)
@@ -241,6 +238,7 @@ public Cart incrementItem(String productId) {
         // Xóa Cart
 //        cartRepository.delete(cart);
     }
+
     public void deleteCartItem(String idCartItem){
 //        String name = SecurityContextHolder.getContext().getAuthentication().getName();
 //        User user = userRepository.findByUsername(name).orElseThrow(()->new RuntimeException("Khong tìm thấy user trong cart service"));

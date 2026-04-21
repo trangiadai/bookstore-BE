@@ -1,10 +1,11 @@
 package com.ctu.bookstore.controller.display;
 
 import com.ctu.bookstore.dto.request.display.CategoryRequestDTO;
-import com.ctu.bookstore.dto.respone.display.CategoryResponeDTO;
+import com.ctu.bookstore.dto.response.display.CategoryResponseDTO;
 import com.ctu.bookstore.entity.display.Category;
 import com.ctu.bookstore.mapper.display.CategoryMapper;
 import com.ctu.bookstore.service.display.CategoryService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -28,44 +29,44 @@ public class CategoryController {
     CategoryMapper categoryMapper;
 
     @PostMapping
-    public ResponseEntity<CategoryResponeDTO> createCategory(@RequestBody CategoryRequestDTO category) {
+    public ResponseEntity<CategoryResponseDTO> createCategory(@Valid @RequestBody CategoryRequestDTO category) {
         Category createdCategory = categoryService.create(category);
 
-        CategoryResponeDTO categoryResponeDTO = categoryMapper.toCategoryRespone(createdCategory);
+        CategoryResponseDTO categoryResponseDTO = categoryMapper.toCategoryRespone(createdCategory);
 //        categoryRespone.setChildren(createdCategory.getChildCategory());
-        return new ResponseEntity<CategoryResponeDTO>(categoryResponeDTO, HttpStatus.CREATED);
+        return new ResponseEntity<CategoryResponseDTO>(categoryResponseDTO, HttpStatus.CREATED);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryResponeDTO> getByID(@PathVariable("id") String categoryId) {
+    public ResponseEntity<CategoryResponseDTO> getByID(@PathVariable("id") String categoryId) {
         Category category = categoryService.getByID(categoryId);
 
         // Tạo bản sao để tránh lỗi chỉnh sửa đồng thời
         Set<Category> childrenCopy = new HashSet<>(category.getChildCategory());
-        Set<CategoryResponeDTO> childrenRespones = categoryMapper.toCategoryResponeSet(childrenCopy);
+        Set<CategoryResponseDTO> childrenRespones = categoryMapper.toCategoryResponeSet(childrenCopy);
 
-        CategoryResponeDTO categoryResponeDTO = categoryMapper.toCategoryRespone(category);
-        categoryResponeDTO.setChildren(childrenRespones);
+        CategoryResponseDTO categoryResponseDTO = categoryMapper.toCategoryRespone(category);
+        categoryResponseDTO.setChildren(childrenRespones);
 
-        return ResponseEntity.ok(categoryResponeDTO);
+        return ResponseEntity.ok(categoryResponseDTO);
     }
     @GetMapping
-    public ResponseEntity<List<CategoryResponeDTO>> getAllCategories() {
+    public ResponseEntity<List<CategoryResponseDTO>> getAllCategories() {
         List<Category> categories = categoryService.getAllCategories();
 
         // Map sang DTO response
-        List<CategoryResponeDTO> responses = categories.stream()
+        List<CategoryResponseDTO> responses = categories.stream()
                 .map(categoryMapper::toCategoryRespone)
                 .toList();
 
         return ResponseEntity.ok(responses);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryResponeDTO> updateCategory(
+    public ResponseEntity<CategoryResponseDTO> updateCategory(
             @PathVariable("id") String id,
-            @RequestBody CategoryRequestDTO updatedRequest) {
+            @Valid @RequestBody CategoryRequestDTO updatedRequest) {
 
         Category updatedCategory = categoryService.updateCategory(id, updatedRequest);
-        CategoryResponeDTO response = categoryMapper.toCategoryRespone(updatedCategory);
+        CategoryResponseDTO response = categoryMapper.toCategoryRespone(updatedCategory);
 
         return ResponseEntity.ok(response);
     }

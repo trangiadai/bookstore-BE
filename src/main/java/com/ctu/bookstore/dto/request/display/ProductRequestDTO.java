@@ -1,5 +1,7 @@
 package com.ctu.bookstore.dto.request.display;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,8 +16,10 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductRequestDTO {
+    @NotBlank(message = "nameProduct của sản phẩm không đựợc để trống")
     String nameProduct;
     Double importPrice;
+    @NotNull(message = "Giá đang bán không được để trống")
     Double sellingPrice;
     Double salePrice;
     int quantity;

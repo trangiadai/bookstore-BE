@@ -47,7 +47,7 @@ public class User {
     @ToString.Exclude
     Cart cart;
     @ManyToMany
-    Set<Role> roles;
+    Set<String> roles;
 
     @Override
     public String toString() {

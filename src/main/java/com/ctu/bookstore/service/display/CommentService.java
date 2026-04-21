@@ -1,7 +1,7 @@
 package com.ctu.bookstore.service.display;
 
 import com.ctu.bookstore.dto.request.display.CommentRequestDTO;
-import com.ctu.bookstore.dto.respone.display.CommentResponseDTO;
+import com.ctu.bookstore.dto.response.display.CommentResponseDTO;
 import com.ctu.bookstore.entity.display.Comment;
 import com.ctu.bookstore.entity.display.Product;
 import com.ctu.bookstore.entity.payment.UserOrder;
@@ -14,6 +14,7 @@ import com.ctu.bookstore.repository.payment.UserOrderRepository;
 import com.ctu.bookstore.service.identity.UserService;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -25,15 +26,15 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-@AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CommentService {
     CommentRepository commentRepository;
-    UserOrderRepository userOrderRepository;
-    ProductRepository productRepository; // bạn đã có sẵn
-    UserRepository userRepository;       // bạn đã có sẵn (nếu cần lấy username)
+    ProductRepository productRepository;
+    UserRepository userRepository;
     CommentMapper commentMapper;
     UserService userService;
+
     @Transactional
     public CommentResponseDTO createComment(CommentRequestDTO request) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -81,6 +82,7 @@ public class CommentService {
     public List<Comment> getCommentOfProduct(String productId){
         return commentRepository.findByProductIdOrderByCreatedAtDesc(productId);
     }
+
     public Set<Product> getAllProductAllowComment(){
         Set<Product> products = new HashSet<>();
 
@@ -103,6 +105,4 @@ public class CommentService {
 
         return products;
     }
-
-
 }
