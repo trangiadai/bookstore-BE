@@ -1,8 +1,6 @@
 package com.ctu.bookstore.configuration;
 
-import com.ctu.bookstore.enums.Role;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,22 +23,15 @@ import java.util.List;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-//    private final String[] PUBLIC_ENDPOINTS = {"/users",
-//            "/auth/token", "/auth/introspect" ,"/auth/logout", "/images/upload",
-//            "/products","/products/*","checkout/create-session","/carts/my-cart",
-//            "/carts/size","user/infor","/intentChat","/category","/products/filter-by-category","/search/*", "/search", "/api/test-gemini"
-//    };
-    private final String[] PUBLIC_ENDPOINTS = {"checkout/create-session","carts/item","/conversations/create",
-        "/conversation","/messages/create","/messages/*",
-        "/conversations/create-default","/chat","/intentChat","/users/*"
+    private final String[] PUBLIC_ENDPOINTS = {
+        "/auth/token", "/auth/introspect" ,"/auth/logout",
+            "/products","/products/*","/category","/products/filter-by-category","/search/*", "/search"
     };
-    @Value("${jwt.signerKey}")
-    private String signerKey;
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
 
     @Bean
-    public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         // 1. Kích hoạt cấu hình CORS (Nó sẽ tìm bean CorsConfigurationSource)
         httpSecurity.cors(Customizer.withDefaults());
         //Cho phep access vào những endpoints trong public_endpoints bằng các phương thức POST, GET mà không cần xác thực
@@ -100,11 +91,13 @@ public class SecurityConfig {
         return source;
     }
 
-    //Bean để thay đổi AuthorityPrefix từ SCOPE_ -> ROLE_
+    //Bean để thay đổi AuthorityPrefix từ "SCOPE_" -> "", do đã cài đặt prefix là "ROLE_" đối với roles trong AuthService
+    // và để tránh Spring gán "SCOPE_" cho mọi permissions nên ta chuyển thành ""
+    // giúp khi decode JWT ra dể phân biệt cái nào là role cái nào là permission
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter (){
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);

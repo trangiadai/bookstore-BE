@@ -49,7 +49,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
         System.out.println("Password SAU ENCODE: " + user.getPassword());
         HashSet<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
+//        roles.add(Role.USER.name());
         InforCheckout inforCheckout = InforCheckout.builder()
                 .name(user.getLastname()+ user.getFirstname())
                 .email(user.getEmail())
@@ -59,12 +59,16 @@ public class UserService {
                 .note("bạn chưa có ghi chú cho đơn hàng")
                 .build();
         user.setInforCheckout(inforCheckout);
-        user.setRoles(roles);
+//        user.setRoles(roles);
+        // TODO: CHỈNH LẠI LOGIC, CHỖ NÀY MẶC ĐỊNH TẠO TK LÀ CÓ ROLE USER VÀ NHƯNG PERMISSION LIÊN QUAN
 
        return  userMapper.toUserRespone(userRepository.save(user));
 
     }
 
+
+    //@PreAuthorize("hasAuthorize('NAME_OF_PERMISSION')") ví dụ trường hợp dùng permission thay vì role
+    //@PreAuthorize("hasAuthorize('ROLE_ADMIN')") hoặc dùng như vầy dũng được vì hasAuthorize match chính xác từng Authority
     @PreAuthorize("hasRole('ADMIN')") //Tạo 1 cái proxy ngay trước cái method này, kiểm tra trước lúc gọi mehtod phải có role là ADMIN thì mới gọi đc
     public List<UserResponeDTO> getUsers(){
         return userRepository.findAll().stream()
@@ -88,8 +92,7 @@ public class UserService {
     }
 
     public UserResponeDTO updateUser(String id, UserUpdateRequestDTO req){
-
-         User user = userRepository.findById(id)
+        User user = userRepository.findById(id)
                  .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         InforCheckout inforCheckout = user.getInforCheckout();
         if (req.getUsername() != null)
@@ -103,45 +106,39 @@ public class UserService {
 
         if (req.getFirstname() != null && req.getLastname() != null)
             inforCheckout.setName(req.getLastname() + req.getFirstname());
+
         if (req.getGender() != null)
             user.setGender(req.getGender());
 
         if (req.getDob() != null)
             user.setDob(req.getDob());
-        if (req.getPhoneNumber() != null)
+
+        if (req.getPhoneNumber() != null) {
             user.setPhoneNumber(req.getPhoneNumber());
             inforCheckout.setPhoneNumber((req.getPhoneNumber()));
-
+        }
         if (req.getAvatar() != null)
             user.setAvatar(req.getAvatar());
 
-        if (req.getEmail() != null)
+        if (req.getEmail() != null) {
             user.setEmail(req.getEmail());
             inforCheckout.setEmail(req.getEmail());
-
-        if (req.getAddress() != null)
+        }
+        if (req.getAddress() != null) {
             user.setAddress(req.getAddress());
             inforCheckout.setAddress(req.getAddress());
-//        userMapper.updateUser(user,req);
-
-//         user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
-
+        }
         // Password chỉ update nếu không null
         if (req.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(req.getPassword()));
         }
-//         var roles = roleRepository.findAllById(userUpdateRequest.getRoles());
         // Roles cũng vậy
         if (req.getRoles() != null) {
             var roles = roleRepository.findAllById(req.getRoles());
             user.setRoles(new HashSet<>(roles));
         }
 
-//         user.setRoles(new HashSet<>(roles));
-        System.out.println("User trong updateUser UserService: "+ user);
          return userMapper.toUserRespone(userRepository.save(user));
-
-
     }
 
     public void updateInforCheckout(InforCheckout inforCheckout){

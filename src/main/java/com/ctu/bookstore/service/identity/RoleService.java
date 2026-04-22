@@ -25,13 +25,11 @@ public class RoleService {
 
     public RoleResposeDTO create(RoleRequestDTO request){
         var role = roleMapper.toRole(request);
-        System.out.println("role: "+role);
+        // sử lý map permission dạng String -> dạng Permission
         var permissions = permissionRepository.findAllById(request.getPermissions());
-        System.out.println("permissions: "+permissions);
         role.setPermissions(new HashSet<>(permissions));
-
         role = roleRepository.save(role);
-        System.out.println("role: "+role);
+
         return roleMapper.toRoleRespone(role);
     }
 

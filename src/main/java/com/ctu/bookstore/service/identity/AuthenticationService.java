@@ -88,30 +88,37 @@ public class AuthenticationService {
 
     private String buildScope(User user){
         StringJoiner stringJoiner = new StringJoiner(" ");
-        System.out.println("role của user trong buildScope " + user.getRoles());
         if (!CollectionUtils.isEmpty(user.getRoles()))
-            user.getRoles().forEach(stringJoiner::add);
+            user.getRoles().forEach(role -> {
+                stringJoiner.add("ROLE_" + role.getName());
+                if (!CollectionUtils.isEmpty(role.getPermissions()))
+                    role.getPermissions()
+                            .forEach(permission -> stringJoiner.add(permission.getName()));
+            });
 
-        System.out.println("stringJoiner của buildScope trong AuthenticationService "+stringJoiner);
         return stringJoiner.toString();
     }
-//    private String buildScope(User user){
-//        StringJoiner stringJoiner = new StringJoiner(" ");
-//        System.out.println("role của user trong buildScope " + user.getRoles());
-//        if (!CollectionUtils.isEmpty(user.getRoles()))
-//            user.getRoles().forEach(role -> {
-//                stringJoiner.add("ROLE_" + role.getName());
-//                if (!CollectionUtils.isEmpty(role.getPermissions()))
-//                    role.getPermissions()
-//                            .forEach(permission -> stringJoiner.add(permission.getName()));
-//            });
-//        System.out.println("stringJoiner của buildScope trong AuthenticationService "+stringJoiner);
-//        return stringJoiner.toString();
-//    }
+
+    public IntrospectResponseDTO introspect(IntrospectRequestDTO request)
+            throws JOSEException, ParseException {
+
+        var token = request.getToken();
+        SignedJWT jwt = null; //để lưu sessionId trong socketHandler
+        boolean isValid = true;
+        try {
+            jwt = verifyToken(token);
+        }catch (Exception e){
+            isValid = false;
+        }
+
+        return IntrospectResponseDTO.builder()
+                .userName(Objects.nonNull(jwt) ? jwt.getJWTClaimsSet().getSubject() : null)
+                .valid(isValid)
+                .build();
+    }
 
     public void logout(LogoutRequestDTO request) throws ParseException, JOSEException {
         var signToken = verifyToken(request.getToken());
-
         String jit = signToken.getJWTClaimsSet().getJWTID();
         Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
 
@@ -123,29 +130,6 @@ public class AuthenticationService {
         invalidatedTokenRepository.save(invalidatedToken);
     }
 
-    public IntrospectResponseDTO introspect(IntrospectRequestDTO request)
-            throws JOSEException, ParseException {
-
-        var token = request.getToken();
-        SignedJWT jwt = null; //để lưu sessionId trong socketHandler
-
-        boolean isValid = true;
-        try {
-            jwt = verifyToken(token);
-        }catch (Exception e){
-            isValid = false;
-        }
-
-        return IntrospectResponseDTO.builder()
-                .userName(
-                        Objects.nonNull(jwt)
-                                ? jwt.getJWTClaimsSet().getSubject()
-                                : null
-                )
-                .valid(isValid)
-                .build();
-    }
-
     private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
         SignedJWT signedJWT = SignedJWT.parse(token);
@@ -155,10 +139,12 @@ public class AuthenticationService {
         if (!(verified && expiryTime.after(new Date())))
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
-        if (invalidatedTokenRepository
-                .existsById(signedJWT.getJWTClaimsSet().getJWTID()))
+        if (invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
         return signedJWT;
     }
+
+
+
 }

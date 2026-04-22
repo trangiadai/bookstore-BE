@@ -13,5 +13,5 @@ import java.util.Set;
 public class RoleRequestDTO {
     String name;
     String description;
-    Set<String> permissions;
+    Set<String> permissions; // vì chỉ cần permission name
 }

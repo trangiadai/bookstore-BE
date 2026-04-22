@@ -1,6 +1,5 @@
 package com.ctu.bookstore.dto.request.identity;
 
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

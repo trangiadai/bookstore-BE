@@ -13,6 +13,9 @@ public interface UserMapper {
     User toUser(UserRequestDTO userRequestDTO);
 
     UserResponeDTO toUserRespone(User user);
+
+    // Do roles trong Request là String nhưng trong User là Role
+    // do đó cần map thủ công chứ không dùng mapper để tự động đc
     @Mapping(target = "roles" , ignore = true)
     void updateUser(@MappingTarget User user, UserUpdateRequestDTO userUpdateRequestDTO);
 

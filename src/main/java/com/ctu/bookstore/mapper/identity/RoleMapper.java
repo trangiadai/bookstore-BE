@@ -8,6 +8,8 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
+    // vì roles trong request là String mà trong Role là Permission đó đó cần bỏ qua nó
+    // sau đó mình tự map vào sau
     @Mapping(target = "permissions", ignore = true)
     Role toRole(RoleRequestDTO roleRequestDTO);
 
