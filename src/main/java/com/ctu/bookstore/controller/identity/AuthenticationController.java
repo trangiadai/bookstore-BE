@@ -3,8 +3,9 @@ package com.ctu.bookstore.controller.identity;
 import com.ctu.bookstore.dto.request.identity.AuthenticationRequestDTO;
 import com.ctu.bookstore.dto.request.identity.IntrospectRequestDTO;
 import com.ctu.bookstore.dto.request.identity.LogoutRequestDTO;
+import com.ctu.bookstore.dto.request.identity.RefreshRequestDTO;
 import com.ctu.bookstore.dto.response.ApiResponseDTO;
-import com.ctu.bookstore.dto.response.identity.AuthenticationResponeDTO;
+import com.ctu.bookstore.dto.response.identity.AuthenticationResponseDTO;
 import com.ctu.bookstore.dto.response.IntrospectResponseDTO;
 import com.ctu.bookstore.service.identity.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
@@ -24,10 +25,10 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/token")
-    public ApiResponseDTO<AuthenticationResponeDTO> authenticate(@RequestBody AuthenticationRequestDTO authenticationRequestDTO){
-        AuthenticationResponeDTO result = authenticationService.authenticate(authenticationRequestDTO);
+    public ApiResponseDTO<AuthenticationResponseDTO> authenticate(@RequestBody AuthenticationRequestDTO authenticationRequestDTO){
+        AuthenticationResponseDTO result = authenticationService.authenticate(authenticationRequestDTO);
 
-        return ApiResponseDTO.<AuthenticationResponeDTO>builder()
+        return ApiResponseDTO.<AuthenticationResponseDTO>builder()
                 .result(result)
                 .build();
     }
@@ -47,5 +48,13 @@ public class AuthenticationController {
 
         return ApiResponseDTO.<Void>builder()
                 .build();
+    }
+
+    @PostMapping("/refresh")
+    ApiResponseDTO<AuthenticationResponseDTO> authenticate(@RequestBody RefreshRequestDTO request)
+            throws ParseException, JOSEException {
+        var result = authenticationService.refreshToken(request);
+
+        return ApiResponseDTO.<AuthenticationResponseDTO>builder().result(result).build();
     }
 }

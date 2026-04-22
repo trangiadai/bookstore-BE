@@ -1,4 +1,4 @@
-package com.ctu.bookstore.dto.response.identity;
+package com.ctu.bookstore.dto.request.identity;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,7 +8,6 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PermissionResponeDTO {
-    String name;
-    String description;
+public class RefreshRequestDTO {
+    String token;
 }

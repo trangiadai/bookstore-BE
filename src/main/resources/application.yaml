@@ -37,6 +37,8 @@ spring:
 
 jwt:
   signerKey: ${JWT_SIGNER_KEY}
+  valid-duration: ${JWT_VALID_DURATION}                     #in second
+  refreshable-duration: ${JWT_REFRESHABLE_DURATION}         #in seconds
 
 cloudinary:
   cloud-name: ${CLOUDINARY_CLOUD_NAME}

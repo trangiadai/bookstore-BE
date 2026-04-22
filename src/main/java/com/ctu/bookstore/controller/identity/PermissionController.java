@@ -3,7 +3,7 @@ package com.ctu.bookstore.controller.identity;
 
 import com.ctu.bookstore.dto.request.identity.PermissionRequestDTO;
 import com.ctu.bookstore.dto.response.ApiResponseDTO;
-import com.ctu.bookstore.dto.response.identity.PermissionResponeDTO;
+import com.ctu.bookstore.dto.response.identity.PermissionResponseDTO;
 import com.ctu.bookstore.service.identity.PermissionService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,15 +22,15 @@ public class PermissionController {
     PermissionService permissionService;
 
     @PostMapping
-    ApiResponseDTO<PermissionResponeDTO> create(@RequestBody PermissionRequestDTO request){
-        return ApiResponseDTO.<PermissionResponeDTO>builder()
+    ApiResponseDTO<PermissionResponseDTO> create(@RequestBody PermissionRequestDTO request){
+        return ApiResponseDTO.<PermissionResponseDTO>builder()
                 .result(permissionService.create(request))
                 .build();
     }
 
     @GetMapping
-    ApiResponseDTO<List<PermissionResponeDTO>> getAll(){
-        return ApiResponseDTO.<List<PermissionResponeDTO>>builder()
+    ApiResponseDTO<List<PermissionResponseDTO>> getAll(){
+        return ApiResponseDTO.<List<PermissionResponseDTO>>builder()
                 .result(permissionService.getAll())
                 .build();
     }

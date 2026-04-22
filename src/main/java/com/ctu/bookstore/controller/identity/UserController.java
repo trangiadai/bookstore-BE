@@ -3,7 +3,7 @@ package com.ctu.bookstore.controller.identity;
 import com.ctu.bookstore.dto.request.identity.UserUpdateRequestDTO;
 import com.ctu.bookstore.dto.response.ApiResponseDTO;
 import com.ctu.bookstore.dto.request.identity.UserRequestDTO;
-import com.ctu.bookstore.dto.response.identity.UserResponeDTO;
+import com.ctu.bookstore.dto.response.identity.UserResponseDTO;
 import com.ctu.bookstore.dto.response.display.ProductResponseDTO;
 import com.ctu.bookstore.dto.response.payment.UserOrderResponseDTO;
 import com.ctu.bookstore.entity.identity.User;
@@ -35,23 +35,23 @@ public class UserController {
     ProductMapper productMapper;
 
     @PostMapping
-    public ApiResponseDTO<UserResponeDTO> createUser(@RequestBody @Valid UserRequestDTO userRequestDTO){
+    public ApiResponseDTO<UserResponseDTO> createUser(@RequestBody @Valid UserRequestDTO userRequestDTO){
         ApiResponseDTO<User> apiResponseDTO = new ApiResponseDTO<>();
-        return ApiResponseDTO.<UserResponeDTO>builder()
+        return ApiResponseDTO.<UserResponseDTO>builder()
                 .result(userService.createUser(userRequestDTO))
                 .build();
     }
 
     @GetMapping
-    ApiResponseDTO<List<UserResponeDTO>> getUsers(){
-        return ApiResponseDTO.<List<UserResponeDTO>>builder()
+    ApiResponseDTO<List<UserResponseDTO>> getUsers(){
+        return ApiResponseDTO.<List<UserResponseDTO>>builder()
                 .result(userService.getUsers())
                 .build();
     }
 
     @GetMapping("/myInfo")
-    ApiResponseDTO<UserResponeDTO> getMyInfo(){
-        return ApiResponseDTO.<UserResponeDTO>builder()
+    ApiResponseDTO<UserResponseDTO> getMyInfo(){
+        return ApiResponseDTO.<UserResponseDTO>builder()
                 .result(userService.getMyInfo())
                 .build();
     }
@@ -64,10 +64,10 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ApiResponseDTO<UserResponeDTO> updateUser(@RequestBody UserUpdateRequestDTO userRequestBody ){
+    public ApiResponseDTO<UserResponseDTO> updateUser(@RequestBody UserUpdateRequestDTO userRequestBody ){
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(name).orElseThrow(()-> new RuntimeException("Khong tim thay user trong user controller"));
-        return ApiResponseDTO.<UserResponeDTO>builder()
+        return ApiResponseDTO.<UserResponseDTO>builder()
                 .result(userService.updateUser(user.getId(),userRequestBody))
                 .build();
     }

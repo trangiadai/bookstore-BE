@@ -1,7 +1,7 @@
 package com.ctu.bookstore.service.identity;
 
 import com.ctu.bookstore.dto.request.identity.PermissionRequestDTO;
-import com.ctu.bookstore.dto.response.identity.PermissionResponeDTO;
+import com.ctu.bookstore.dto.response.identity.PermissionResponseDTO;
 import com.ctu.bookstore.entity.identity.Permission;
 import com.ctu.bookstore.mapper.identity.PermissionMapper;
 import com.ctu.bookstore.repository.identity.PermissionRepository;
@@ -21,14 +21,14 @@ public class PermissionService {
     PermissionRepository permissionRepository;
     PermissionMapper permissionMapper;
 
-    public PermissionResponeDTO create(PermissionRequestDTO request){
+    public PermissionResponseDTO create(PermissionRequestDTO request){
         Permission permission = permissionMapper.toPermission(request);
         permission = permissionRepository.save(permission);
 
         return permissionMapper.toPermissionRespone(permission);
     }
 
-    public List<PermissionResponeDTO> getAll(){
+    public List<PermissionResponseDTO> getAll(){
         var permissions = permissionRepository.findAll();
         return permissions.stream().map(permissionMapper::toPermissionRespone).toList();
     }

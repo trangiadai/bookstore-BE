@@ -14,7 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserResponeDTO {
+public class UserResponseDTO {
     @Size(min=4, message = "USERNAME_INVALID")
     String username;
     @NotBlank(message = "FIRSTNAME_REQUIRED")
@@ -29,6 +29,6 @@ public class UserResponeDTO {
     @Email(message = "EMAIL_INVALID")
     String email;
     String address;
-    Set<RoleResposeDTO> roles;
+    Set<RoleResponseDTO> roles;
     Set<UserOrderResponseDTO> userOrderResponseDTO;
 }

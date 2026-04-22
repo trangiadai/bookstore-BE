@@ -2,7 +2,7 @@ package com.ctu.bookstore.controller.identity;
 
 import com.ctu.bookstore.dto.request.identity.RoleRequestDTO;
 import com.ctu.bookstore.dto.response.ApiResponseDTO;
-import com.ctu.bookstore.dto.response.identity.RoleResposeDTO;
+import com.ctu.bookstore.dto.response.identity.RoleResponseDTO;
 import com.ctu.bookstore.service.identity.RoleService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,15 +22,15 @@ public class RoleController {
     RoleService roleService;
 
     @PostMapping
-    ApiResponseDTO<RoleResposeDTO> create(@RequestBody RoleRequestDTO request){
-        return ApiResponseDTO.<RoleResposeDTO>builder()
+    ApiResponseDTO<RoleResponseDTO> create(@RequestBody RoleRequestDTO request){
+        return ApiResponseDTO.<RoleResponseDTO>builder()
                 .result(roleService.create(request))
                 .build();
     }
 
     @GetMapping
-    ApiResponseDTO<List<RoleResposeDTO>> getAll(){
-        return ApiResponseDTO.<List<RoleResposeDTO>>builder()
+    ApiResponseDTO<List<RoleResponseDTO>> getAll(){
+        return ApiResponseDTO.<List<RoleResponseDTO>>builder()
                 .result(roleService.getAll())
                 .build();
     }

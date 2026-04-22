@@ -1,7 +1,7 @@
 package com.ctu.bookstore.service.identity;
 
 import com.ctu.bookstore.dto.request.identity.RoleRequestDTO;
-import com.ctu.bookstore.dto.response.identity.RoleResposeDTO;
+import com.ctu.bookstore.dto.response.identity.RoleResponseDTO;
 import com.ctu.bookstore.mapper.identity.RoleMapper;
 import com.ctu.bookstore.repository.identity.PermissionRepository;
 import com.ctu.bookstore.repository.identity.RoleRepository;
@@ -23,7 +23,7 @@ public class RoleService {
     PermissionRepository permissionRepository;
     RoleMapper roleMapper;
 
-    public RoleResposeDTO create(RoleRequestDTO request){
+    public RoleResponseDTO create(RoleRequestDTO request){
         var role = roleMapper.toRole(request);
         // sử lý map permission dạng String -> dạng Permission
         var permissions = permissionRepository.findAllById(request.getPermissions());
@@ -33,7 +33,7 @@ public class RoleService {
         return roleMapper.toRoleRespone(role);
     }
 
-    public List<RoleResposeDTO> getAll(){
+    public List<RoleResponseDTO> getAll(){
         return roleRepository.findAll()
                 .stream()
                 .map(roleMapper::toRoleRespone)

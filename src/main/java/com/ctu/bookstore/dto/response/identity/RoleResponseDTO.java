@@ -10,8 +10,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RoleResposeDTO {
+public class RoleResponseDTO {
     String name;
     String description;
-    Set<PermissionResponeDTO> permissions;
+    Set<PermissionResponseDTO> permissions;
 }

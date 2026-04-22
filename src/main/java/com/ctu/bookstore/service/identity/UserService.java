@@ -2,12 +2,11 @@ package com.ctu.bookstore.service.identity;
 
 import com.ctu.bookstore.dto.request.identity.UserRequestDTO;
 import com.ctu.bookstore.dto.request.identity.UserUpdateRequestDTO;
-import com.ctu.bookstore.dto.response.identity.UserResponeDTO;
+import com.ctu.bookstore.dto.response.identity.UserResponseDTO;
 import com.ctu.bookstore.entity.identity.User;
 //import com.ctu.bookstore.entity.identity.Role;
 import com.ctu.bookstore.entity.payment.InforCheckout;
 import com.ctu.bookstore.entity.payment.UserOrder;
-import com.ctu.bookstore.enums.Role;
 import com.ctu.bookstore.exception.AppException;
 import com.ctu.bookstore.exception.ErrorCode;
 import com.ctu.bookstore.mapper.identity.RoleMapper;
@@ -39,7 +38,7 @@ public class UserService {
     RoleMapper roleMapper;
     RoleRepository roleRepository;
 
-    public UserResponeDTO createUser(UserRequestDTO userRequestDTO){
+    public UserResponseDTO createUser(UserRequestDTO userRequestDTO){
         if (userRepository.existsByUsername(userRequestDTO.getUsername()))
             throw new AppException(ErrorCode.USER_EXISTED);
 
@@ -70,14 +69,14 @@ public class UserService {
     //@PreAuthorize("hasAuthorize('NAME_OF_PERMISSION')") ví dụ trường hợp dùng permission thay vì role
     //@PreAuthorize("hasAuthorize('ROLE_ADMIN')") hoặc dùng như vầy dũng được vì hasAuthorize match chính xác từng Authority
     @PreAuthorize("hasRole('ADMIN')") //Tạo 1 cái proxy ngay trước cái method này, kiểm tra trước lúc gọi mehtod phải có role là ADMIN thì mới gọi đc
-    public List<UserResponeDTO> getUsers(){
+    public List<UserResponseDTO> getUsers(){
         return userRepository.findAll().stream()
                 .map(userMapper::toUserRespone).toList();
     }
 
     // Tạo 1 cái proxy, cho phép gọi hàm trước, chạy xong sau đó nếu thỏa đều kiện proxy thì mới cho return còn không thì sẽ chặn lại
     @PostAuthorize("returnObject.username == authentication.name")
-    public UserResponeDTO getMyInfo(){
+    public UserResponseDTO getMyInfo(){
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         User user = userRepository.findByUsername(name).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
@@ -91,7 +90,7 @@ public class UserService {
         return user.getInforCheckout();
     }
 
-    public UserResponeDTO updateUser(String id, UserUpdateRequestDTO req){
+    public UserResponseDTO updateUser(String id, UserUpdateRequestDTO req){
         User user = userRepository.findById(id)
                  .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         InforCheckout inforCheckout = user.getInforCheckout();
