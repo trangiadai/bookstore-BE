@@ -48,7 +48,6 @@ public class PaymentController {
                     .result(response)
                     .build();
         } catch (RuntimeException e) {
-            // Xử lý lỗi API Stripe
             throw new RuntimeException("Lỗi khi gọi api create-shipCOD"+ e);
         }
     }

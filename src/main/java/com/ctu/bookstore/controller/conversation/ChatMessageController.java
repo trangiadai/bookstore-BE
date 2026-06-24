@@ -18,6 +18,7 @@ import java.util.List;
 @RequestMapping("/messages")
 public class ChatMessageController {
     ChatMessageService chatMessageService;
+
     @PostMapping
     ApiResponseDTO<ChatMessageResponseDTO> create(@RequestBody @Valid ChatMessageRequestDTO request) {
         return ApiResponseDTO.<ChatMessageResponseDTO>builder()

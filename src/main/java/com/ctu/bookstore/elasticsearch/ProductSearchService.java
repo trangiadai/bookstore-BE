@@ -1,16 +1,18 @@
 package com.ctu.bookstore.elasticsearch;
 
 import com.ctu.bookstore.entity.display.Product;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProductSearchService {
-
-    private final ProductSearchRepository searchRepository;
+    ProductSearchRepository searchRepository;
 
     // Đồng bộ 1 sản phẩm vào Elasticsearch
     public void indexProduct(Product product) {

@@ -1,9 +1,13 @@
 package com.ctu.bookstore.configuration;
 
 import com.ctu.bookstore.dto.request.identity.IntrospectRequestDTO;
-import com.ctu.bookstore.dto.response.IntrospectResponseDTO;
+import com.ctu.bookstore.dto.response.identity.IntrospectResponseDTO;
 import com.ctu.bookstore.service.identity.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -18,13 +22,16 @@ import java.text.ParseException;
 import java.util.Objects;
 
 @Component
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CustomJwtDecoder implements JwtDecoder {
+    @NonFinal
     @Value("${jwt.signerKey}")
     private String signerKey;
-    @Autowired
     AuthenticationService authenticationService;
-
+    @NonFinal
     private NimbusJwtDecoder nimbusJwtDecoder = null;
+
     @Override
     public Jwt decode(String token) throws JwtException {
         try {

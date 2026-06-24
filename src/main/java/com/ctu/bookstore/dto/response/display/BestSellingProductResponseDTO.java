@@ -3,12 +3,12 @@ package com.ctu.bookstore.dto.response.display;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@Getter
-@Setter
+
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BestSellingProductResponseDTO {
     String productId;
     String nameProduct;

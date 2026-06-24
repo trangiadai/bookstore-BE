@@ -25,6 +25,7 @@ import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,6 +43,7 @@ public class PaymentService {
     CartRepository cartRepository;
     ProductRepository productRepository;
     OrderRepository orderRepository;
+    @NonFinal
     @Value("${stripe.apiKey}")
     private String stripeSecretKey;
     CartService cartService;
@@ -91,14 +93,6 @@ public class PaymentService {
                     .build();
             lineItems.add(lineItem);
         }
-//        Set<OrderItem> orderItems = new HashSet<>();
-//        OrderItem orderItem = new OrderItem();
-//        for(CartItem item : cart.getCartItems()){
-//            orderItem.setProduct(item.getProduct());
-//            orderItem.setQuantity(item.getQuatity());
-//            orderItem.setPriceAtTime(item.getProduct().getSellingPrice());
-//            orderItems.add(orderItem);
-//        }
         // Tạo Đơn hàng TẠM THỜI với trạng thái PENDING
         UserOrder newOrder = UserOrder.builder()
                 .user(user)
@@ -179,14 +173,6 @@ public class PaymentService {
             product.setQuantity(product.getQuantity()-item.getQuatity());
 
         }
-//        Set<OrderItem> orderItems = new HashSet<>();
-//        OrderItem orderItem = new OrderItem();
-//        for(CartItem item : cart.getCartItems()){
-//            orderItem.setProduct(item.getProduct());
-//            orderItem.setQuantity(item.getQuatity());
-//            orderItem.setPriceAtTime(item.getProduct().getSellingPrice());
-//            orderItems.add(orderItem);
-//        }
         // Tạo Đơn hàng TẠM THỜI với trạng thái PENDING
         UserOrder newOrder = UserOrder.builder()
                 .user(user)
@@ -302,111 +288,4 @@ public class PaymentService {
 
         return userOrderMapper.toUserOrderResponse(order);
     }
-
-//    @Transactional
-//    public CheckoutRespone createCheckoutSession(String userId, CheckoutRequest checkoutRequest) throws StripeException {
-//        Stripe.apiKey = stripeSecretKey;
-//
-//        // 1. Kiểm tra UserID (Bắt buộc cho việc tạo Order)
-//        if (userId == null || userId.trim().isEmpty()) {
-//            throw new RuntimeException("UserID là bắt buộc để tạo đơn hàng.");
-//        }
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new RuntimeException("User không tồn tại trong PaymentService"));
-//
-//        List<CheckoutItemRequest> itemsToCheckout = new ArrayList<>();
-//
-//        // 2. Phân biệt logic Mua Ngay và Mua từ Giỏ hàng
-//        boolean isBuyNow = checkoutRequest != null &&
-//                checkoutRequest.getItemsToCheckout() != null &&
-//                !checkoutRequest.getItemsToCheckout().isEmpty();
-//
-//        if (isBuyNow) {
-//            // A. LOGIC MUA NGAY (BUY NOW)
-//            // Lấy danh sách sản phẩm và số lượng từ CheckoutRequest truyền vào.
-//            itemsToCheckout = checkoutRequest.getItemsToCheckout();
-//
-//        } else {
-//            // B. LOGIC MUA TỪ GIỎ HÀNG (CART CHECKOUT)
-//            // Lấy toàn bộ sản phẩm trong giỏ hàng của User.
-//            Cart cart = cartRepository.findByUserId(userId)
-//                    .orElseThrow(() -> new RuntimeException("Ko có giỏ hàng trong PaymentService"));
-//
-//            if (cart.getCartItems().isEmpty()) {
-//                throw new RuntimeException("Giỏ hàng rỗng, không thể thanh toán.");
-//            }
-//
-//            itemsToCheckout = cart.getCartItems().stream()
-//                    .map(item -> new CheckoutItemRequest(item.getProduct().getId(), item.getQuatity()))
-//                    .toList();
-//        }
-//
-//        // Bắt đầu tạo đơn hàng và Line Items cho Stripe
-//        List<SessionCreateParams.LineItem> lineItems = new ArrayList<>();
-//        Double totalAmount = 0.0;
-//
-//        UserOrder newOrder = UserOrder.builder()
-//                .user(user)
-//                .status(OrderStatus.PENDING)
-//                .shippingAddress(user.getAdress())
-//                .build();
-//
-//        for (CheckoutItemRequest itemRequest : itemsToCheckout){
-//            Product product = productRepository.findById(itemRequest.getProductId())
-//                    .orElseThrow(()-> new RuntimeException("Sản phẩm không tồn tại: trong payment service"));
-//            int quantity = itemRequest.getQuantity();
-//
-//            if (product.getQuantity() < quantity) {
-//                throw new RuntimeException("Sản phẩm '" + product.getNameProduct() + "' không đủ tồn kho.");
-//            }
-//
-//            // Tính giá
-//            Double itemPrice = product.getSalePrice() != null ? product.getSalePrice() : product.getSellingPrice();
-//            long unitAmount = (long) (itemPrice * 100);
-//            totalAmount += itemPrice * quantity;
-//
-//            // Tạo OrderItem
-//            OrderItem orderItem = OrderItem.builder()
-//                    .order(newOrder)
-//                    .quantity(quantity)
-//                    .priceAtTime(itemPrice)
-//                    .product(product)
-//                    .build();
-//            newOrder.getOrderItems().add(orderItem);
-//
-//            // Tạo LineItem cho Stripe (ĐÃ SỬA: Thêm vào lineItems)
-//            SessionCreateParams.LineItem params = SessionCreateParams.LineItem.builder()
-//                    .setQuantity((long) quantity)
-//                    .setPriceData(SessionCreateParams.LineItem.PriceData.builder()
-//                            .setCurrency("vnd")
-//                            .setUnitAmount(unitAmount)
-//                            .setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder()
-//                                    .setName(product.getNameProduct())
-//                                    .build())
-//                            .build())
-//                    .build();
-//            lineItems.add(params); // <--- Đã sửa: Thêm LineItem vào danh sách
-//        }
-//
-//        // Lưu Order vào DB
-//        newOrder.setTotalAmount(totalAmount);
-////        newOrder = orderRepository.save(newOrder);
-//
-//        // Tạo Session Stripe
-//        SessionCreateParams params = SessionCreateParams.builder()
-//                .addAllLineItem(lineItems)
-//                .setMode(SessionCreateParams.Mode.PAYMENT)
-//                .putMetadata("orderId", newOrder.getId().toString())
-//                .setSuccessUrl("http://localhost:3000")
-//                .setCancelUrl("http://localhost:3000/cart")
-//                .build();
-//
-//        Session session = Session.create(params);
-//        newOrder.setStripeSessionId(session.getId()); // Cần lưu lại session ID
-//        orderRepository.save(newOrder); // Lưu lại Order với Session ID
-//
-//        return CheckoutRespone.builder()
-//                .stripeCheckoutUrl(session.getUrl())
-//                .build();
-//    }
 }

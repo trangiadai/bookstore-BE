@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Getter //recommend using @Getter and @Setter cho entity(google for more). One reason is it easy to manage
+@Getter
 @Setter
 @Builder
 @NoArgsConstructor
@@ -26,8 +26,8 @@ public class User {
     String id;
     String username;
     String password;
-    String firstname;
-    String lastname;
+    String firstName;
+    String lastName;
     @Enumerated(EnumType.STRING)
     Gender gender;
     LocalDate dob;
@@ -55,8 +55,8 @@ public class User {
                 "id='" + id + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", firstname='" + firstname + '\'' +
-                ", lastname='" + lastname + '\'' +
+                ", firstname='" + firstName + '\'' +
+                ", lastname='" + lastName + '\'' +
                 ", gender=" + gender +
                 ", avatar='" + avatar + '\'' +
                 ", email='" + email + '\'' +

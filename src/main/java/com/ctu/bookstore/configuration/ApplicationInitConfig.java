@@ -1,7 +1,8 @@
 package com.ctu.bookstore.configuration;
 
+import com.ctu.bookstore.entity.identity.Role;
 import com.ctu.bookstore.entity.identity.User;
-import com.ctu.bookstore.enums.Role;
+import com.ctu.bookstore.repository.identity.RoleRepository;
 import com.ctu.bookstore.repository.identity.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
@@ -20,15 +22,27 @@ import java.util.HashSet;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class ApplicationInitConfig {
-    @Autowired
-    PasswordEncoder passwordEncoder;
 
     @Bean
-    ApplicationRunner applicationRunner(UserRepository userRepository){
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(10);
+    }
+
+    @Bean
+    ApplicationRunner applicationRunner(UserRepository userRepository,
+                                        RoleRepository roleRepository, PasswordEncoder passwordEncoder){
         return args -> {
+            Role adminRole = roleRepository.findById("ADMIN")
+                    .orElseGet(() -> roleRepository.save(
+                            Role.builder()
+                                    .name("ADMIN")
+                                    .description("Administrator Role")
+                                    .build()
+                    ));
+
             if (userRepository.findByUsername("admin").isEmpty()){
-                var roles = new HashSet<String>();
-                roles.add(Role.ADMIN.name());
+                var roles = new HashSet<Role>();
+                roles.add(adminRole);
 
                 User user = User.builder()
                         .username("admin")

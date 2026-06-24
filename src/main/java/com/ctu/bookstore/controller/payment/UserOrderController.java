@@ -29,7 +29,7 @@ public class UserOrderController {
                 .build();
     }
 
-    @GetMapping
+    @GetMapping("/my-orders")
     public ApiResponseDTO<List<UserOrderResponseDTO>> getOrders() {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         var user = userRepository.findByUsername(name);

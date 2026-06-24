@@ -1,6 +1,5 @@
 package com.ctu.bookstore.controller.identity;
 
-import com.ctu.bookstore.dto.request.identity.UserUpdateRequestDTO;
 import com.ctu.bookstore.dto.response.ApiResponseDTO;
 import com.ctu.bookstore.dto.request.identity.UserRequestDTO;
 import com.ctu.bookstore.dto.response.identity.UserResponseDTO;
@@ -64,7 +63,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ApiResponseDTO<UserResponseDTO> updateUser(@RequestBody UserUpdateRequestDTO userRequestBody ){
+    public ApiResponseDTO<UserResponseDTO> updateUser(@RequestBody UserRequestDTO userRequestBody ){
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(name).orElseThrow(()-> new RuntimeException("Khong tim thay user trong user controller"));
         return ApiResponseDTO.<UserResponseDTO>builder()

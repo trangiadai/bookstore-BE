@@ -2,15 +2,13 @@ package com.ctu.bookstore.dto.request.payment;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class InforCheckoutRequestUpdateDTO {
     @NotBlank(message = "name của người nhận không được bỏ trống")
     String name;

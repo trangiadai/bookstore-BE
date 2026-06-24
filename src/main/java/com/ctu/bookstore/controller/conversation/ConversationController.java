@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@Slf4j
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping("/conversations")
+@Slf4j
 public class ConversationController {
     ConversationService conversationService;
 

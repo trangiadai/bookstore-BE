@@ -1,10 +1,9 @@
 package com.ctu.bookstore.service.identity;
 
+import com.ctu.bookstore.dto.request.identity.RoleRequestDTO;
 import com.ctu.bookstore.dto.request.identity.UserRequestDTO;
-import com.ctu.bookstore.dto.request.identity.UserUpdateRequestDTO;
 import com.ctu.bookstore.dto.response.identity.UserResponseDTO;
 import com.ctu.bookstore.entity.identity.User;
-//import com.ctu.bookstore.entity.identity.Role;
 import com.ctu.bookstore.entity.payment.InforCheckout;
 import com.ctu.bookstore.entity.payment.UserOrder;
 import com.ctu.bookstore.exception.AppException;
@@ -26,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +50,7 @@ public class UserService {
         HashSet<String> roles = new HashSet<>();
 //        roles.add(Role.USER.name());
         InforCheckout inforCheckout = InforCheckout.builder()
-                .name(user.getLastname()+ user.getFirstname())
+                .name(user.getLastName()+ user.getFirstName())
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
                 .address(user.getAddress())
@@ -90,21 +90,21 @@ public class UserService {
         return user.getInforCheckout();
     }
 
-    public UserResponseDTO updateUser(String id, UserUpdateRequestDTO req){
+    public UserResponseDTO updateUser(String id, UserRequestDTO req){
         User user = userRepository.findById(id)
                  .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         InforCheckout inforCheckout = user.getInforCheckout();
         if (req.getUsername() != null)
             user.setUsername(req.getUsername());
 
-        if (req.getFirstname() != null)
-            user.setFirstname(req.getFirstname());
+        if (req.getFirstName() != null)
+            user.setFirstName(req.getFirstName());
 
-        if (req.getLastname() != null)
-            user.setLastname(req.getLastname());
+        if (req.getLastName() != null)
+            user.setLastName(req.getLastName());
 
-        if (req.getFirstname() != null && req.getLastname() != null)
-            inforCheckout.setName(req.getLastname() + req.getFirstname());
+        if (req.getFirstName() != null && req.getLastName() != null)
+            inforCheckout.setName(req.getLastName() + req.getFirstName());
 
         if (req.getGender() != null)
             user.setGender(req.getGender());
@@ -133,7 +133,13 @@ public class UserService {
         }
         // Roles cũng vậy
         if (req.getRoles() != null) {
-            var roles = roleRepository.findAllById(req.getRoles());
+            // 1. Extract the String names out of the Set<RoleRequestDTO>
+            Set<String> roleNames = req.getRoles().stream()
+                    .map(RoleRequestDTO::getName)
+                    .collect(Collectors.toSet());
+
+            // 2. Query the DB using the extracted String IDs
+            var roles = roleRepository.findAllById(roleNames);
             user.setRoles(new HashSet<>(roles));
         }
 

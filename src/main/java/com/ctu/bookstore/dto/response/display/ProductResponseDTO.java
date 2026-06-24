@@ -1,11 +1,18 @@
 package com.ctu.bookstore.dto.response.display;
 
 import com.ctu.bookstore.entity.display.ProductImages;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 import java.util.Set;
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductResponseDTO {
     String id;
     String nameProduct;

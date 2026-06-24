@@ -1,5 +1,8 @@
 package com.ctu.bookstore.configuration;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,13 +25,14 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
+@FieldDefaults(level= AccessLevel.PRIVATE, makeFinal = true)
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINTS = {
-        "/auth/token", "/auth/introspect" ,"/auth/logout", "/auth/refresh",
+        "/auth/token", "/auth/introspect" ,"/auth/logout", "/auth/refresh","/users",
             "/products","/products/*","/category","/products/filter-by-category","/search/*", "/search"
     };
-    @Autowired
-    private CustomJwtDecoder customJwtDecoder;
+    CustomJwtDecoder customJwtDecoder;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -104,9 +108,9 @@ public class SecurityConfig {
         return jwtAuthenticationConverter;
     }
 
-    // Bean dùng để mã hóa mật khẩu, giúp không cần phải tốn công tạo thêm 1 cái mỗi lần dùng (ApplicationInitConfig,
-    @Bean
-    PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder(10);
-    }
+//    // Bean dùng để mã hóa mật khẩu, giúp không cần phải tốn công tạo thêm 1 cái mỗi lần dùng (ApplicationInitConfig,
+//    @Bean
+//    PasswordEncoder passwordEncoder(){
+//        return new BCryptPasswordEncoder(10);
+//    }
 }

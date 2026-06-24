@@ -2,17 +2,20 @@ package com.ctu.bookstore.elasticsearch;
 
 import com.ctu.bookstore.entity.display.Product;
 import com.ctu.bookstore.repository.display.ProductRepository;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/search")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequestMapping("/search")
 public class ProductSearchController {
-    private final ProductSearchService productSearchService;
-    private final ProductRepository productRepository;
+    ProductSearchService productSearchService;
+    ProductRepository productRepository;
 
     // === 1) Search sản phẩm theo tên ===
     @GetMapping

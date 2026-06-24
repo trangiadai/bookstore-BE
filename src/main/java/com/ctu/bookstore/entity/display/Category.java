@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Getter //recommend using @Getter and @Setter cho entity(google for more). One reason is it easy to manage
+@Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor

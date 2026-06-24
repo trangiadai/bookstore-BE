@@ -13,13 +13,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Entity
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity
 public class Product {
     @Id
     String id;

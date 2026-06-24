@@ -4,8 +4,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
-@Getter
-@Setter
+
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

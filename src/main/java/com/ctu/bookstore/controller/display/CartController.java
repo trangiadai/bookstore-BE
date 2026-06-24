@@ -66,7 +66,7 @@ public class CartController {
                 .build();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/increase")
     public ApiResponseDTO<CartResponseDTO> incrementQuantity(@PathVariable("id") String itemId){
 
         return ApiResponseDTO.<CartResponseDTO>builder()
@@ -74,7 +74,7 @@ public class CartController {
                 .build();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/decrease")
     public ApiResponseDTO<CartResponseDTO> decrementQuantity(@PathVariable("id") String itemId ){
 
         return ApiResponseDTO.<CartResponseDTO>builder()

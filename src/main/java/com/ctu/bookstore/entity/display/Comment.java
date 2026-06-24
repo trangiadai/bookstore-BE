@@ -6,11 +6,12 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.time.Instant;
 
-@Data
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@Getter
+@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Comment {
     @MongoId
     String id;

@@ -5,7 +5,7 @@ import com.ctu.bookstore.dto.request.identity.IntrospectRequestDTO;
 import com.ctu.bookstore.dto.request.identity.LogoutRequestDTO;
 import com.ctu.bookstore.dto.request.identity.RefreshRequestDTO;
 import com.ctu.bookstore.dto.response.identity.AuthenticationResponseDTO;
-import com.ctu.bookstore.dto.response.IntrospectResponseDTO;
+import com.ctu.bookstore.dto.response.identity.IntrospectResponseDTO;
 import com.ctu.bookstore.entity.identity.InvalidatedToken;
 import com.ctu.bookstore.entity.identity.User;
 import com.ctu.bookstore.exception.AppException;

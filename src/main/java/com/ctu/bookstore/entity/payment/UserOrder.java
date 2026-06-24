@@ -39,7 +39,4 @@ public class UserOrder {
     String notion;
     String paymentMethod;
     String voucher;
-
-
-
 }

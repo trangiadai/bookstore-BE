@@ -6,7 +6,7 @@ import com.ctu.bookstore.dto.request.identity.LogoutRequestDTO;
 import com.ctu.bookstore.dto.request.identity.RefreshRequestDTO;
 import com.ctu.bookstore.dto.response.ApiResponseDTO;
 import com.ctu.bookstore.dto.response.identity.AuthenticationResponseDTO;
-import com.ctu.bookstore.dto.response.IntrospectResponseDTO;
+import com.ctu.bookstore.dto.response.identity.IntrospectResponseDTO;
 import com.ctu.bookstore.service.identity.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
@@ -19,7 +19,6 @@ import java.text.ParseException;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-//@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/auth")
 public class AuthenticationController {
     AuthenticationService authenticationService;

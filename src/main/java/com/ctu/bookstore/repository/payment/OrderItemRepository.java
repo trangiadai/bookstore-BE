@@ -14,8 +14,10 @@ import java.util.List;
 
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
+
+    // Fixed the package path spelling (response) and class name suffix (DTO)
     @Query("""
-        SELECT new com.ctu.bookstore.dto.respone.display.BestSellingProductResponse(
+        SELECT new com.ctu.bookstore.dto.response.display.BestSellingProductResponseDTO(
             oi.product.id,
             oi.product.nameProduct,
             SUM(oi.quantity),
@@ -29,8 +31,9 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     List<BestSellingProductResponseDTO> findBestSellingProducts(@Param("statuses") List<OrderStatus> statuses);
 
     // Nếu muốn giới hạn số lượng kết quả (top N) thì dùng Pageable:
+    // Fixed the package path spelling (response) and class name suffix (DTO)
     @Query("""
-        SELECT new com.ctu.bookstore.dto.respone.display.BestSellingProductResponse(
+        SELECT new com.ctu.bookstore.dto.response.display.BestSellingProductResponseDTO(
             oi.product.id,
             oi.product.nameProduct,
             SUM(oi.quantity),

@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class WebSocketSessionService {
     WebSocketSessionRepository webSocketSessionRepository;
 

@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @Builder
@@ -13,14 +14,14 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserRequestDTO {
-    @Size(min=4, message = "USERNAME_INVALID")
+    @Size(min=2, message = "USERNAME_INVALID")
     String username;
     @Size(min=6, message = "PASSWORD_INVALID")
     String password;
     @NotBlank(message = "FIRSTNAME_REQUIRED")
-    String firstname;
+    String firstName;
     @NotBlank(message = "LASTNAME_REQUIRED")
-    String lastname;
+    String lastName;
     @NotNull(message = "GENDER_REQUIRED")
     Gender gender;
     @Past(message = "DOB_INVALID")
@@ -30,4 +31,5 @@ public class UserRequestDTO {
     String email;
     String phoneNumber;
     String address;
+    Set<RoleRequestDTO> roles;
 }
