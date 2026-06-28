@@ -26,25 +26,20 @@ import java.util.List;
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
-@FieldDefaults(level= AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SecurityConfig {
-    private final String[] PUBLIC_ENDPOINTS = {
-        "/auth/token", "/auth/introspect" ,"/auth/logout", "/auth/refresh","/users",
-            "/products","/products/*","/category","/products/filter-by-category","/search/*", "/search"
-    };
+    String[] PUBLIC_POST_ENDPOINTS = {"/auth/**", "/users"};
+    String[] PUBLIC_GET_ENDPOINTS = {"/products", "/products/**", "/category", "/category/**", "/search"};
     CustomJwtDecoder customJwtDecoder;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         // 1. Kích hoạt cấu hình CORS (Nó sẽ tìm bean CorsConfigurationSource)
         httpSecurity.cors(Customizer.withDefaults());
-        //Cho phep access vào những endpoints trong public_endpoints bằng các phương thức POST, GET mà không cần xác thực
         httpSecurity.authorizeHttpRequests(authorize ->
-                authorize.requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.GET,PUBLIC_ENDPOINTS).permitAll()
+                authorize.requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS).permitAll()
                         .requestMatchers(
-                                // cho phép truy cập vào nhưng URL này từ Browser mà không cần Authentication
-                                // ví dụ: http://localhost:8080/swagger-ui.html
                                 "/bookstore/swagger-ui/**",
                                 "/bookstore/swagger-ui.html",
                                 "/bookstore/v3/api-docs/**",
@@ -68,13 +63,12 @@ public class SecurityConfig {
 
         // 2. Tắt CSRF nếu dùng JWT (vì JWT đã chống CSRF rồi)
         httpSecurity.csrf(csrf -> csrf.disable());
-
-        // Cấu hình oauth2. Đăng kí 1 cai provider manager, authetication provider để support JWT token
+        // Cấu hình oauth2. turn on a provider manager, authetication provider để support JWT token
         httpSecurity.oauth2ResourceServer(oauth2 ->
-                oauth2.jwt(jwtConfigurer -> jwtConfigurer
-                                .decoder(customJwtDecoder)
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+                        oauth2.jwt(jwtConfigurer -> jwtConfigurer
+                                        .decoder(customJwtDecoder)
+                                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                                .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                 // giúp chỉ ra khi mà cái authentication nó fail thì ta sẽ điều hướng user đi đâu
                 // trong trường hợp này ta chỉ return về 1 error message chứ không điều hướng đi đầu cả
         );
@@ -82,7 +76,6 @@ public class SecurityConfig {
         return httpSecurity.build();
     }
 
-    // Bean để cấu hình CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -99,7 +92,7 @@ public class SecurityConfig {
     // và để tránh Spring gán "SCOPE_" cho mọi permissions nên ta chuyển thành ""
     // giúp khi decode JWT ra dể phân biệt cái nào là role cái nào là permission
     @Bean
-    JwtAuthenticationConverter jwtAuthenticationConverter (){
+    JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
 
@@ -107,10 +100,4 @@ public class SecurityConfig {
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
     }
-
-//    // Bean dùng để mã hóa mật khẩu, giúp không cần phải tốn công tạo thêm 1 cái mỗi lần dùng (ApplicationInitConfig,
-//    @Bean
-//    PasswordEncoder passwordEncoder(){
-//        return new BCryptPasswordEncoder(10);
-//    }
 }

@@ -44,8 +44,7 @@ public class AuthenticationService {
     UserRepository userRepository;
     InvalidatedTokenRepository invalidatedTokenRepository;
     PasswordEncoder passwordEncoder;
-
-    @NonFinal // để không bị đưa vào constructor (vì đã dùng @RequiredArg phía trên)
+    @NonFinal
     @Value("${jwt.signerKey}")
     String SIGNER_KEY;
     @NonFinal
@@ -55,11 +54,11 @@ public class AuthenticationService {
     @Value("${jwt.refreshable-duration}")
     protected long REFRESHABLE_DURATION;
 
-    public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO authenticationRequestDTO){
+    public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO authenticationRequestDTO) {
         User user = userRepository.findByUsername(authenticationRequestDTO.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         boolean authenticated = passwordEncoder.matches(authenticationRequestDTO.getPassword(), user.getPassword());
-        if(!authenticated){
+        if (!authenticated) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
@@ -71,7 +70,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    private String generateToken(User user){
+    private String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .issuer("BookStore_BE")
@@ -83,7 +82,7 @@ public class AuthenticationService {
                 .claim("scope", buildScope(user))
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
-        JWSObject jwsObject = new JWSObject(header,payload);
+        JWSObject jwsObject = new JWSObject(header, payload);
         try {
             jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
             return jwsObject.serialize();
@@ -93,7 +92,7 @@ public class AuthenticationService {
         }
     }
 
-    private String buildScope(User user){
+    private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
         if (!CollectionUtils.isEmpty(user.getRoles()))
             user.getRoles().forEach(role -> {
@@ -106,31 +105,13 @@ public class AuthenticationService {
         return stringJoiner.toString();
     }
 
-    public IntrospectResponseDTO introspect(IntrospectRequestDTO request)
-            throws JOSEException, ParseException {
-
-        var token = request.getToken();
-        SignedJWT jwt = null; //để lưu sessionId trong socketHandler
-        boolean isValid = true;
-        try {
-            jwt = verifyToken(token, false);
-        }catch (Exception e){
-            isValid = false;
-        }
-
-        return IntrospectResponseDTO.builder()
-                .userName(Objects.nonNull(jwt) ? jwt.getJWTClaimsSet().getSubject() : null)
-                .valid(isValid)
-                .build();
-    }
-
     public void logout(LogoutRequestDTO request) throws ParseException, JOSEException {
         try {
             var signToken = verifyToken(request.getToken(), false);
-            String jit = signToken.getJWTClaimsSet().getJWTID();
+            String jti = signToken.getJWTClaimsSet().getJWTID();
             Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
             InvalidatedToken invalidatedToken = InvalidatedToken.builder()
-                    .id(jit).
+                    .id(jti).
                     expiryTime(expiryTime).
                     build();
             invalidatedTokenRepository.save(invalidatedToken);
@@ -141,20 +122,23 @@ public class AuthenticationService {
 
     public AuthenticationResponseDTO refreshToken(RefreshRequestDTO request) throws ParseException, JOSEException {
         var signedToken = verifyToken(request.getToken(), true);
-        var jit = signedToken.getJWTClaimsSet().getJWTID();
+        var jti = signedToken.getJWTClaimsSet().getJWTID();
         var expiryTime = signedToken.getJWTClaimsSet().getExpirationTime();
         InvalidatedToken invalidatedToken = InvalidatedToken.builder()
-                .id(jit)
+                .id(jti)
                 .expiryTime(expiryTime)
                 .build();
         invalidatedTokenRepository.save(invalidatedToken);
 
         var username = signedToken.getJWTClaimsSet().getSubject();
         var user = userRepository.findByUsername(username)
-                        .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
         var token = generateToken(user);
 
-        return AuthenticationResponseDTO.builder().token(token).authenticated(true).build();
+        return AuthenticationResponseDTO.builder()
+                .token(token)
+                .authenticated(true)
+                .build();
     }
 
     private SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
@@ -173,5 +157,23 @@ public class AuthenticationService {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
         return signedJWT;
+    }
+
+    //Just using this to test in postman, now I'm not using it
+    public IntrospectResponseDTO introspect(IntrospectRequestDTO request)
+            throws JOSEException, ParseException {
+        var token = request.getToken();
+        SignedJWT jwt = null; //để lưu sessionId trong socketHandler
+        boolean isValid = true;
+        try {
+            jwt = verifyToken(token, false);
+        } catch (Exception e) {
+            isValid = false;
+        }
+
+        return IntrospectResponseDTO.builder()
+                .userName(Objects.nonNull(jwt) ? jwt.getJWTClaimsSet().getSubject() : null)
+                .valid(isValid)
+                .build();
     }
 }

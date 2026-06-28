@@ -27,10 +27,10 @@ import java.util.Objects;
 public class CustomJwtDecoder implements JwtDecoder {
     @NonFinal
     @Value("${jwt.signerKey}")
-    private String signerKey;
+    String SIGNER_KEY;
     AuthenticationService authenticationService;
     @NonFinal
-    private NimbusJwtDecoder nimbusJwtDecoder = null;
+    NimbusJwtDecoder nimbusJwtDecoder = null;
 
     @Override
     public Jwt decode(String token) throws JwtException {
@@ -44,7 +44,7 @@ public class CustomJwtDecoder implements JwtDecoder {
             throw new RuntimeException(e);
         }
         if(Objects.isNull(nimbusJwtDecoder)){
-            SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(),"HS512");
+            SecretKeySpec secretKeySpec = new SecretKeySpec(SIGNER_KEY.getBytes(),"HS512");
             nimbusJwtDecoder = NimbusJwtDecoder
                     .withSecretKey(secretKeySpec)
                     .macAlgorithm(MacAlgorithm.HS512)

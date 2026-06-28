@@ -13,10 +13,6 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import java.io.IOException;
 
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
-
-    // Dùng để sử lý Exception UNAUTHORIZED vì nó xảy ra ở filter chứ không xuống tới đc hệ thống
-    // nên ta phải có cách sử lý riêng chứ không xử lý chung trong GlobalException đc
-    // commence chỉ xảy ra khi trong quá trình Authentication có một Exception xảy ra dẫn đến Authentication không thành công
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         ErrorCode errorCode = ErrorCode.UNAUTHENTICATED;
